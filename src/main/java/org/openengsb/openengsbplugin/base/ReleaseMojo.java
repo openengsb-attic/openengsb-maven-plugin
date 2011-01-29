@@ -40,7 +40,6 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
 
     @Override
     protected final void configure() throws MojoExecutionException {
-        configure();
         goals.add("release:prepare");
         goals.add("release:perform");
         userProperties.put("maven.test.skip", "true");
