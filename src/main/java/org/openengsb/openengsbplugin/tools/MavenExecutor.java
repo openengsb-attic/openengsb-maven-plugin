@@ -20,11 +20,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.maven.Maven;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
+import org.apache.maven.plugin.logging.Log;
 
 public interface MavenExecutor {
 
@@ -32,21 +29,8 @@ public interface MavenExecutor {
      * Builds and executes a {@link org.apache.maven.execution.MavenExecutionRequest MavenExecutionRequest} with given
      * parameters. The request is copied from the wrapper request so all parameters except goals, activeProfiles,
      * deactivateProfiles and userProperties are inherited and have to be changed explicitly.
-     *
-     * @param mojo the wrapper mojo
-     * @param goals goals to execute
-     * @param activatedProfiles active profiles
-     * @param deactivatedProfiles inactive profiles
-     * @param userproperties properties for the mojo
-     * @param project maven project from the wrapper mojo
-     * @param session maven session from the wrapper mojo
-     * @param maven maven implementation from the wrapper mojo
-     * @throws MojoExecutionException
      */
-    void execute(AbstractMojo mojo, List<String> goals,
-            List<String> activatedProfiles, List<String> deactivatedProfiles,
-            Properties userproperties, MavenProject project,
-            MavenSession session, Maven maven)
+    void execute(Log log)
         throws MojoExecutionException;
 
     /**
@@ -55,15 +39,26 @@ public interface MavenExecutor {
      * @param interactiveMode <code>true</code> enables interactive mode for this execution <br/>
      *        <code>false</code> is equivalent to <code>mvn --batch-mode &lt;goal&gt;
      */
-    MavenExecutor setInterActiveMode(boolean interactiveMode);
+    void setInterActiveMode(boolean interactiveMode);
 
     /**
      * Changes this inherited parameter explicitely.
      *
      * @param recursive <code>true</code> recursive execution of the embedded request
      */
-    MavenExecutor setRecursive(boolean recursive);
+    void setRecursive(boolean recursive);
+    
+    void addGoals(List<String> goals);
 
-    MavenExecutor setCustomPomFile(File pomFile);
+    void addActivatedProfiles(List<String> activatedProfiles);
+
+    void addDeactivatedProfiles(List<String> deactivatedProfiles);
+
+    void addUserProperties(Properties userproperties);
+
+    void addProperties(List<String> goals, List<String> activatedProfiles, List<String> deactivatedProfiles,
+            Properties userproperties);
+
+    void setCustomPomFile(File pomFile);
 
 }

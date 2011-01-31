@@ -16,8 +16,13 @@
 
 package org.openengsb.openengsbplugin;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.openengsb.openengsbplugin.base.ConfiguredMojo;
+import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
 /**
  * Mojo to perform nightly releases. This mojo activates the "nightly" profile
@@ -39,13 +44,29 @@ public class ReleaseNightly extends ConfiguredMojo {
     }
 
     @Override
-    protected void configure() throws MojoExecutionException {
+    protected void configureCoCMojo() throws MojoExecutionException {
+        List<String> goals = new ArrayList<String>();
         goals.add("clean");
         goals.add("install");
         goals.add("deploy");
+
+        List<String> activatedProfiles = new ArrayList<String>();
+        activatedProfiles.add(cocProfile);
         activatedProfiles.add("release");
         activatedProfiles.add("nightly");
+
+        Properties userProperties = new Properties();
         userProperties.put("maven.test.skip", "true");
+
+        MavenExecutor releaseNightlyExecutor = getNewMavenExecutor(this);
+        releaseNightlyExecutor.addGoals(goals);
+        releaseNightlyExecutor.addActivatedProfiles(activatedProfiles);
+        releaseNightlyExecutor.addUserProperties(userProperties);
+
+        releaseNightlyExecutor.setRecursive(true);
+        releaseNightlyExecutor.setCustomPomFile(cocPom);
+
+        addMavenExecutor(releaseNightlyExecutor);
     }
 
     @Override

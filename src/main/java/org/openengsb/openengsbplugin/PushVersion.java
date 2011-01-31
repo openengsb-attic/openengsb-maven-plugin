@@ -16,8 +16,13 @@
 
 package org.openengsb.openengsbplugin;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.maven.plugin.MojoExecutionException;
-import org.openengsb.openengsbplugin.base.AbstractOpenengsbMojo;
+import org.openengsb.openengsbplugin.base.MavenExecutorMojo;
+import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
 /**
  * update development version
@@ -31,7 +36,7 @@ import org.openengsb.openengsbplugin.base.AbstractOpenengsbMojo;
  * @aggregator true
  * 
  */
-public class PushVersion extends AbstractOpenengsbMojo {
+public class PushVersion extends MavenExecutorMojo {
 
     /**
      * the new version
@@ -48,14 +53,21 @@ public class PushVersion extends AbstractOpenengsbMojo {
     }
 
     protected void configure() {
+        List<String> goals = new ArrayList<String>();
         goals.add("release:update-versions");
+
+        Properties userProperties = new Properties();
         userProperties.put("autoVersionSubmodules", "true");
         userProperties.put("developmentVersion", developmentVersion);
-    }
 
-    protected void executeMaven() throws MojoExecutionException {
-        getNewMavenExecutor().setRecursive(true).setInterActiveMode(false)
-                .execute(this, goals, null, null, userProperties, getProject(), getSession(), getMaven());
+        MavenExecutor pushVersionExecutor = getNewMavenExecutor(this);
+        pushVersionExecutor.addGoals(goals);
+        pushVersionExecutor.addUserProperties(userProperties);
+
+        pushVersionExecutor.setRecursive(true);
+        pushVersionExecutor.setInterActiveMode(false);
+
+        addMavenExecutor(pushVersionExecutor);
     }
 
 }

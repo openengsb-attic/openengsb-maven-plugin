@@ -33,8 +33,8 @@ import org.openengsb.openengsbplugin.base.ReleaseMojo;
 public class ReleaseFinal extends ReleaseMojo {
 
     @Override
-    protected void configureReleaseMojo() {
-        activatedProfiles.add("final");
+    protected String getReleaseProfile() {
+        return "final";
     }
 
 }

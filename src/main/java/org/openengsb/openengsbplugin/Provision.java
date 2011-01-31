@@ -108,7 +108,7 @@ public class Provision extends AbstractOpenengsbMojo {
     }
 
     @Override
-    protected void executeMaven() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         if (provisionArchivePathWindows != null && provisionExecutionPathWindows != null
                 && provisionArchivePathUnix != null && provisionExecutionPathUnix != null) {
             CommandLineBuilder command = new CommandLineBuilder();

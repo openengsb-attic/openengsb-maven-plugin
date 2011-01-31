@@ -16,28 +16,14 @@
 
 package org.openengsb.openengsbplugin.base;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.maven.Maven;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.openengsb.openengsbplugin.tools.DefaultMavenExecutor;
-import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
 public abstract class AbstractOpenengsbMojo extends AbstractMojo {
-
-    protected List<String> goals = new ArrayList<String>();
-    protected List<String> activatedProfiles = new ArrayList<String>();
-    protected List<String> deactivatedProfiles = new ArrayList<String>();
-    protected Properties userProperties = new Properties();
-
-    public static final String OPENENGSB_ROOT_GROUP_ID = "org.openengsb";
-    public static final String OPENENGSB_ROOT_ARTIFACT_ID = "openengsb-parent";
 
     /**
      * @parameter expression="${project}"
@@ -58,29 +44,21 @@ public abstract class AbstractOpenengsbMojo extends AbstractMojo {
 
     protected abstract void validateIfExecutionIsAllowed() throws MojoExecutionException;
 
-    protected abstract void executeMaven() throws MojoExecutionException, MojoFailureException;
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        validateIfExecutionIsAllowed();
-        configure();
-        executeMaven();
+
     }
 
-    public MavenProject getProject() {
+    public final MavenProject getProject() {
         return project;
     }
 
-    public MavenSession getSession() {
+    public final MavenSession getSession() {
         return session;
     }
 
-    public Maven getMaven() {
+    public final Maven getMaven() {
         return maven;
-    }
-
-    public MavenExecutor getNewMavenExecutor() {
-        return new DefaultMavenExecutor();
     }
 
     protected final void throwErrorIfWrapperRequestIsRecursive() throws MojoExecutionException {

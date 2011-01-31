@@ -36,7 +36,7 @@ import org.openengsb.openengsbplugin.xml.OpenEngSBMavenPluginNSContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-public abstract class ConfiguredMojo extends AbstractOpenengsbMojo {
+public abstract class ConfiguredMojo extends MavenExecutorMojo {
 
     private static final Logger LOG = Logger.getLogger(ConfiguredMojo.class);
 
@@ -49,7 +49,8 @@ public abstract class ConfiguredMojo extends AbstractOpenengsbMojo {
 
     // #################################
 
-    private File tmpPom;
+    protected File cocPom;
+    protected String cocProfile;
 
     private static final OpenEngSBMavenPluginNSContext NS_CONTEXT = new OpenEngSBMavenPluginNSContext();
     private static final String POM_PROFILE_XPATH = "/pom:project/pom:profiles";
@@ -64,29 +65,21 @@ public abstract class ConfiguredMojo extends AbstractOpenengsbMojo {
     private boolean debugMode;
 
     @Override
-    protected final void executeMaven() throws MojoExecutionException {
-        try {
-            String profileName = UUID.randomUUID().toString();
-            tmpPom = configureTmpPom(profileName);
-            FILES_TO_REMOVE_FINALLY.add(tmpPom);
-            configureMojo(profileName);
-            executeMavenWithCustomPom(tmpPom);
-        } finally {
-            cleanUp();
-        }
+    protected final void configure() throws MojoExecutionException {
+        LOG.trace("-> configure");
+        cocProfile = UUID.randomUUID().toString();
+        cocPom = configureTmpPom(cocProfile);
+        LOG.debug(String.format("TMP_POM: %s", cocPom.toURI().toString()));
+        FILES_TO_REMOVE_FINALLY.add(cocPom);
+        configureCoCMojo();
     }
 
-    private void configureMojo(String profileName) {
-        activatedProfiles.add(profileName);
+    @Override
+    protected void postExecFinally() {
+        cleanUp();
     }
 
-    private void executeMavenWithCustomPom(File pom) throws MojoExecutionException {
-        getNewMavenExecutor()
-                .setRecursive(true)
-                .setCustomPomFile(pom)
-                .execute(this, goals, activatedProfiles, deactivatedProfiles, userProperties, getProject(),
-                        getSession(), getMaven());
-    }
+    protected abstract void configureCoCMojo() throws MojoExecutionException;
 
     private File configureTmpPom(String profileName) throws MojoExecutionException {
         try {
@@ -111,7 +104,7 @@ public abstract class ConfiguredMojo extends AbstractOpenengsbMojo {
     }
 
     private void insertConfigProfileIntoOrigPom(Document originalPom, Document mojoConfiguration, String profileName)
-        throws XPathExpressionException {
+            throws XPathExpressionException {
         Node licenseCheckMojoProfileNode = Tools.evaluateXPath(configProfileXpath, mojoConfiguration, NS_CONTEXT,
                 XPathConstants.NODE, Node.class);
 
@@ -140,6 +133,7 @@ public abstract class ConfiguredMojo extends AbstractOpenengsbMojo {
     }
 
     private void cleanUp() {
+        LOG.trace("-> cleanup()");
         for (File f : FILES_TO_REMOVE_FINALLY) {
             FileUtils.deleteQuietly(f);
         }
