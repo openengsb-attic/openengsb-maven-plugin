@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.openengsb.tooling.pluginsuite.openengsbplugin.base;
+package org.openengsb.openengsbplugin.base;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.openengsb.tooling.pluginsuite.openengsbplugin.tools.DefaultMavenExecutor;
-import org.openengsb.tooling.pluginsuite.openengsbplugin.tools.MavenExecutor;
+import org.openengsb.openengsbplugin.tools.DefaultMavenExecutor;
+import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
 public abstract class MavenExecutorMojo extends AbstractOpenengsbMojo {
 

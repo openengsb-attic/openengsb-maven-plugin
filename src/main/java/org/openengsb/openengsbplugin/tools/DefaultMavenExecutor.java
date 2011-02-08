@@ -28,7 +28,7 @@ import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.openengsb.tooling.pluginsuite.openengsbplugin.base.AbstractOpenengsbMojo;
+import org.openengsb.openengsbplugin.base.AbstractOpenengsbMojo;
 
 public class DefaultMavenExecutor implements MavenExecutor {
 
@@ -36,7 +36,7 @@ public class DefaultMavenExecutor implements MavenExecutor {
 
     private MavenExecutionRequest embeddedRequest;
     private File baseDir = null;
-   
+
     private MavenSession session;
     private Maven maven;
 

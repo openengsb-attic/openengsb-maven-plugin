@@ -40,13 +40,13 @@ import org.ops4j.pax.runner.platform.PlatformException;
 import org.ops4j.pax.runner.platform.internal.CommandLineBuilder;
 
 /**
- * Equivalent to execute karaf or karaf.bat per hand after build by mvn clean install in a (typically) assembly
- * directory.
- *
+ * Equivalent to execute karaf or karaf.bat per hand after build by mvn clean
+ * install in a (typically) assembly directory.
+ * 
  * @goal provision
- *
+ * 
  * @inheritedByDefault false
- *
+ * 
  * @requiresProject true
  */
 public class Provision extends AbstractOpenengsbMojo {
@@ -54,47 +54,53 @@ public class Provision extends AbstractOpenengsbMojo {
     private static final String RUNNER = "target/runner/";
 
     /**
-     * This setting should be done in the one of the assembly folders and have to point to the final directory where the
-     * karaf system, etc configs and so on consist.
-     *
+     * This setting should be done in the one of the assembly folders and have
+     * to point to the final directory where the karaf system, etc configs and
+     * so on consist.
+     * 
      * @parameter expression="${provisionPathUnix}"
      */
     private String provisionArchivePathUnix;
 
     /**
      * The path to the executable in the unix archive file
-     *
+     * 
      * @parameter expression="${provisionExecutionPathUnix}"
      */
     private String provisionExecutionPathUnix;
 
     /**
-     * Sometimes it's required that some executable files, provided in {@link #provisionExecutionPathUnix} execute other
-     * files which have to made executable to work correctly on themselves. Those files should be specified here.
-     *
+     * Sometimes it's required that some executable files, provided in
+     * {@link #provisionExecutionPathUnix} execute other files which have to
+     * made executable to work correctly on themselves. Those files should be
+     * specified here.
+     * 
      * @parameter expression="${additionalRequiredExecutionPathUnix}"
      */
     private String[] additionalRequiredExecutionPathUnix;
 
     /**
-     * This setting should be done in the one of the assembly folders and have to point to the final directory where the
-     * karaf system, etc configs and so on consist.
-     *
+     * This setting should be done in the one of the assembly folders and have
+     * to point to the final directory where the karaf system, etc configs and
+     * so on consist.
+     * 
      * @parameter expression="${provisionPathWindows}"
      */
     private String provisionArchivePathWindows;
 
     /**
      * The path to the executable in the windows archive file
-     *
+     * 
      * @parameter expression="${provisionExecutionPathWindows}"
      */
     private String provisionExecutionPathWindows;
 
     /**
-     * Sometimes it's required that some executable files, provided in {@link #provisionExecutionPathWindows} execute
-     * other files which have to made executable to work correctly on themselves. Those files should be specified here.
-     *
+     * Sometimes it's required that some executable files, provided in
+     * {@link #provisionExecutionPathWindows} execute other files which have to
+     * made executable to work correctly on themselves. Those files should be
+     * specified here.
+     * 
      * @parameter expression="${additionalRequiredExecutionPathWindows}"
      */
     private String[] additionalRequiredExecutionPathWindows;
@@ -155,7 +161,7 @@ public class Provision extends AbstractOpenengsbMojo {
     private void extractUnixArchive() throws MojoFailureException {
         try {
             extract(new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(
-                provisionArchivePathUnix))), new File(RUNNER));
+                    provisionArchivePathUnix))), new File(RUNNER));
         } catch (FileNotFoundException e) {
             throw new MojoFailureException(e, "Provision file for UNIX could not be found (" + provisionArchivePathUnix
                     + ")", e.getMessage());
@@ -167,8 +173,7 @@ public class Provision extends AbstractOpenengsbMojo {
 
     private void extractWindowsArchive() throws MojoFailureException {
         try {
-            extract(new ZipArchiveInputStream(new FileInputStream(provisionArchivePathWindows)), new File(
-                RUNNER));
+            extract(new ZipArchiveInputStream(new FileInputStream(provisionArchivePathWindows)), new File(RUNNER));
         } catch (FileNotFoundException e) {
             throw new MojoFailureException(e, "Provision file for WINDOWS could not be found ("
                     + provisionArchivePathWindows + ")", e.getMessage());

@@ -26,28 +26,33 @@ import org.apache.maven.plugin.logging.Log;
 public interface MavenExecutor {
 
     /**
-     * Builds and executes a {@link org.apache.maven.execution.MavenExecutionRequest MavenExecutionRequest} with given
-     * parameters. The request is copied from the wrapper request so all parameters except goals, activeProfiles,
-     * deactivateProfiles and userProperties are inherited and have to be changed explicitly.
+     * Builds and executes a
+     * {@link org.apache.maven.execution.MavenExecutionRequest
+     * MavenExecutionRequest} with given parameters. The request is copied from
+     * the wrapper request so all parameters except goals, activeProfiles,
+     * deactivateProfiles and userProperties are inherited and have to be
+     * changed explicitly.
      */
-    void execute(Log log)
-        throws MojoExecutionException;
+    void execute(Log log) throws MojoExecutionException;
 
     /**
      * Changes this inherited parameter explicitely.
-     *
-     * @param interactiveMode <code>true</code> enables interactive mode for this execution <br/>
-     *        <code>false</code> is equivalent to <code>mvn --batch-mode &lt;goal&gt;
+     * 
+     * @param interactiveMode <code>true</code> enables interactive mode for
+     *        this execution <br/>
+     *        <code>false</code> is equivalent to
+     *        <code>mvn --batch-mode &lt;goal&gt;
      */
     void setInterActiveMode(boolean interactiveMode);
 
     /**
      * Changes this inherited parameter explicitely.
-     *
-     * @param recursive <code>true</code> recursive execution of the embedded request
+     * 
+     * @param recursive <code>true</code> recursive execution of the embedded
+     *        request
      */
     void setRecursive(boolean recursive);
-    
+
     void addGoals(List<String> goals);
 
     void addActivatedProfiles(List<String> activatedProfiles);

@@ -25,7 +25,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.openengsb.openengsbplugin.base.ConfiguredMojo;
 import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
-
 /**
  * equivalent to
  * <code>mvn install -Prelease,nightly -Dmaven.test.skip=true</code>

@@ -24,7 +24,7 @@ import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.openengsbopenengsbplugin.tools.MavenExecutor;
+import org.openengsb.openengsbplugin.tools.MavenExecutor;
 import org.openengsb.openengsbplugin.tools.Tools;
 
 public abstract class LicenseMojo extends ConfiguredMojo {

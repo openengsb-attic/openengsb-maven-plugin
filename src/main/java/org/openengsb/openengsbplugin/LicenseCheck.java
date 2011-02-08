@@ -18,21 +18,20 @@ package org.openengsb.openengsbplugin;
 
 import org.openengsb.openengsbplugin.base.LicenseMojo;
 
-
 /**
  * Validates license headers.
- *
+ * 
  * @goal licenseCheck
- *
+ * 
  * @inheritedByDefault false
- *
+ * 
  * @requiresProject true
- *
+ * 
  * @aggregator true
- *
+ * 
  */
 public class LicenseCheck extends LicenseMojo {
-    
+
     public LicenseCheck() {
         wrappedGoal = "validate";
         headerPath = "licenseMojo/header.txt";

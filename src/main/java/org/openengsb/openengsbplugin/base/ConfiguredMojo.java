@@ -104,7 +104,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     }
 
     private void insertConfigProfileIntoOrigPom(Document originalPom, Document mojoConfiguration, String profileName)
-            throws XPathExpressionException {
+        throws XPathExpressionException {
         Node licenseCheckMojoProfileNode = Tools.evaluateXPath(configProfileXpath, mojoConfiguration, NS_CONTEXT,
                 XPathConstants.NODE, Node.class);
 

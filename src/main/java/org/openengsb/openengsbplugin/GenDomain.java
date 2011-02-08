@@ -23,8 +23,8 @@ import java.util.Scanner;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.openengsb.openengsbplugin.base.MavenExecutorMojo;
-import org.openengsb.openengsbplugin.tools.Tools;
 import org.openengsb.openengsbplugin.tools.MavenExecutor;
+import org.openengsb.openengsbplugin.tools.Tools;
 
 /**
  * guides through the creation of a domain for the OpenEngSB via the domain

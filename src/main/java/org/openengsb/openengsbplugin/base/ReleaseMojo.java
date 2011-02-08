@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.openengsb.tooling.pluginsuite.openengsbplugin.tools.MavenExecutor;
+import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
 public abstract class ReleaseMojo extends ConfiguredMojo {
 
