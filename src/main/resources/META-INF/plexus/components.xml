@@ -20,9 +20,9 @@
 <component-sets>
   <components>
     <component>
-      <role>org.openengsb.tooling.pluginsuite.openengsbplugin.tools.MavenExecutor</role>
+      <role>org.openengsb.openengsbplugin.tools.MavenExecutor</role>
       <role-hint>default</role-hint>
-      <implementation>org.openengsb.tooling.pluginsuite.openengsbplugin.tools.DefaultMavenExecutor</implementation>
+      <implementation>org.openengsb.openengsbplugin.tools.DefaultMavenExecutor</implementation>
     </component>
   </components>
 </component-sets>
