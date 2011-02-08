@@ -63,7 +63,7 @@ public class Assemble extends ConfiguredMojo {
         assembleMojoExecutor.addUserProperties(userProperties);
 
         assembleMojoExecutor.setRecursive(true);
-        assembleMojoExecutor.addActivatedProfiles(Arrays.asList(new String[] { cocProfile }));
+        assembleMojoExecutor.addActivatedProfiles(Arrays.asList(new String[] { "nightly", cocProfile }));
 
         addMavenExecutor(assembleMojoExecutor);
     }
