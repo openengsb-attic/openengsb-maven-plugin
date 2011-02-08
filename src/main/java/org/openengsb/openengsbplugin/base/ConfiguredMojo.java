@@ -74,12 +74,16 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
 
     @Override
     protected void postExecFinally() {
+        restoreOriginalPom();
+        cleanUp();
+    }
+    
+    private void restoreOriginalPom() {
         try {
-            serializeIntoPom(Tools.parseXMLFromString(FileUtils.readFileToString(backupOriginalPom)));
+            FileUtils.copyFile(backupOriginalPom, getSession().getRequest().getPom());
         } catch (Exception e) {
             // do nothing
         }
-        cleanUp();
     }
 
     protected abstract void configureCoCMojo() throws MojoExecutionException;
@@ -131,7 +135,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
             System.out.print(serializedXml);
         }
 
-        FileUtils.writeStringToFile(getSession().getRequest().getPom(), serializedXml);
+        FileUtils.writeStringToFile(getSession().getRequest().getPom(), serializedXml + "\n");
     }
 
     private void cleanUp() {
