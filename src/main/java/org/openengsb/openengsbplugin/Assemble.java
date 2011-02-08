@@ -63,7 +63,6 @@ public class Assemble extends ConfiguredMojo {
         assembleMojoExecutor.addUserProperties(userProperties);
 
         assembleMojoExecutor.setRecursive(true);
-        assembleMojoExecutor.setCustomPomFile(cocPom);
         assembleMojoExecutor.addActivatedProfiles(Arrays.asList(new String[] { cocProfile }));
 
         addMavenExecutor(assembleMojoExecutor);

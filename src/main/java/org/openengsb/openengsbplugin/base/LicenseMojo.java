@@ -60,7 +60,6 @@ public abstract class LicenseMojo extends ConfiguredMojo {
         licenseMojoExecutor.addUserProperties(userProperties);
 
         licenseMojoExecutor.setRecursive(true);
-        licenseMojoExecutor.setCustomPomFile(cocPom);
         licenseMojoExecutor.addActivatedProfiles(Arrays.asList(new String[] { cocProfile }));
 
         addMavenExecutor(licenseMojoExecutor);

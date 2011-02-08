@@ -61,7 +61,6 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
         phaseOneExecutor.addActivatedProfiles(activatedProfiles);
 
         phaseOneExecutor.setRecursive(true);
-        phaseOneExecutor.setCustomPomFile(cocPom);
 
         addMavenExecutor(phaseOneExecutor);
 
@@ -78,7 +77,6 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
         phaseTwoExecutor.addActivatedProfiles(activatedProfiles);
 
         phaseTwoExecutor.setRecursive(true);
-        phaseTwoExecutor.setCustomPomFile(cocPom);
 
         addMavenExecutor(phaseTwoExecutor);
     }

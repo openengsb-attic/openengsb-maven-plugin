@@ -18,7 +18,6 @@ package org.openengsb.openengsbplugin.base;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,13 +48,14 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
 
     // #################################
 
-    protected File cocPom;
     protected String cocProfile;
 
     private static final OpenEngSBMavenPluginNSContext NS_CONTEXT = new OpenEngSBMavenPluginNSContext();
     private static final String POM_PROFILE_XPATH = "/pom:project/pom:profiles";
 
     protected static final List<File> FILES_TO_REMOVE_FINALLY = new ArrayList<File>();
+    
+    private File backupOriginalPom;
 
     /**
      * If set to "true" prints the temporary pom to the console.
@@ -68,27 +68,34 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     protected final void configure() throws MojoExecutionException {
         LOG.trace("-> configure");
         cocProfile = UUID.randomUUID().toString();
-        cocPom = configureTmpPom(cocProfile);
-        LOG.debug(String.format("TMP_POM: %s", cocPom.toURI().toString()));
-        FILES_TO_REMOVE_FINALLY.add(cocPom);
+        configureTmpPom(cocProfile);
         configureCoCMojo();
     }
 
     @Override
     protected void postExecFinally() {
+        try {
+            serializeIntoPom(Tools.parseXMLFromString(FileUtils.readFileToString(backupOriginalPom)));
+        } catch (Exception e) {
+            // do nothing
+        }
         cleanUp();
     }
 
     protected abstract void configureCoCMojo() throws MojoExecutionException;
 
-    private File configureTmpPom(String profileName) throws MojoExecutionException {
+    private void configureTmpPom(String profileName) throws MojoExecutionException {
         try {
-            Document originalPomDocument = parseProjectPom();
+            
+            backupOriginalPom = backupOriginalPom(getSession().getRequest().getPom());
+            FILES_TO_REMOVE_FINALLY.add(backupOriginalPom);
+            
+            Document pomDocumentToConfigure = parseProjectPom();
             Document configDocument = parseDefaultConfiguration();
 
-            insertConfigProfileIntoOrigPom(originalPomDocument, configDocument, profileName);
-
-            return serializeIntoTmpPom(originalPomDocument);
+            insertConfigProfileIntoOrigPom(pomDocumentToConfigure, configDocument, profileName);
+            
+            serializeIntoPom(pomDocumentToConfigure);
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
             throw new MojoExecutionException("Couldn't configure temporary pom for this execution!", e);
@@ -117,19 +124,14 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         Tools.insertDomNode(originalPom, importedLicenseCheckProfileNode, POM_PROFILE_XPATH, NS_CONTEXT);
     }
 
-    private File serializeIntoTmpPom(Document pomDocument) throws IOException, URISyntaxException {
+    private void serializeIntoPom(Document pomDocument) throws IOException, URISyntaxException {
         String serializedXml = Tools.serializeXML(pomDocument);
 
         if (debugMode) {
             System.out.print(serializedXml);
         }
 
-        String baseDirURI = getSession().getRequest().getPom().getParentFile().toURI().toString();
-        File temporaryPom = new File(new URI(baseDirURI + "/" + "tmpPom.xml"));
-
-        FileUtils.writeStringToFile(temporaryPom, serializedXml);
-
-        return temporaryPom;
+        FileUtils.writeStringToFile(getSession().getRequest().getPom(), serializedXml);
     }
 
     private void cleanUp() {
@@ -137,6 +139,10 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         for (File f : FILES_TO_REMOVE_FINALLY) {
             FileUtils.deleteQuietly(f);
         }
+    }
+    
+    private File backupOriginalPom(File originalPom) throws IOException {
+        return Tools.generateTmpFile(FileUtils.readFileToString(originalPom), ".xml");
     }
 
 }

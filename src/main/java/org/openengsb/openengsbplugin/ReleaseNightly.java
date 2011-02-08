@@ -64,7 +64,6 @@ public class ReleaseNightly extends ConfiguredMojo {
         releaseNightlyExecutor.addUserProperties(userProperties);
 
         releaseNightlyExecutor.setRecursive(true);
-        releaseNightlyExecutor.setCustomPomFile(cocPom);
 
         addMavenExecutor(releaseNightlyExecutor);
     }
