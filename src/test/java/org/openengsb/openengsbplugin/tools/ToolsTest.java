@@ -30,7 +30,6 @@ import javax.xml.xpath.XPathConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.openengsb.openengsbplugin.tools.Tools;
 import org.openengsb.openengsbplugin.xml.OpenEngSBMavenPluginNSContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
