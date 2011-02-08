@@ -32,6 +32,9 @@
             <pushChanges>false</pushChanges>
             <arguments>-Psonatype-oss-release -DpushChanges=false</arguments>
             <preparationGoals>clean install</preparationGoals>
+            <checkModificationExcludes>
+              <checkModificationExclude>pom.xml</checkModificationExclude>
+            </checkModificationExcludes>
           </configuration>
         </plugin>
       </plugins>
