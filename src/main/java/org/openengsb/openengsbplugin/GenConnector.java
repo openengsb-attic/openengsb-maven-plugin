@@ -17,11 +17,13 @@
 package org.openengsb.openengsbplugin;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.openengsb.openengsbplugin.base.AbstractOpenengsbMojo;
+import org.openengsb.openengsbplugin.base.MavenExecutorMojo;
+import org.openengsb.openengsbplugin.tools.MavenExecutor;
 import org.openengsb.openengsbplugin.tools.Tools;
 
 /**
@@ -37,7 +39,7 @@ import org.openengsb.openengsbplugin.tools.Tools;
  * @aggregator true
  * 
  */
-public class GenConnector extends AbstractOpenengsbMojo {
+public class GenConnector extends MavenExecutorMojo {
 
     private boolean archetypeCatalogLocalOnly = false;
 
@@ -73,20 +75,18 @@ public class GenConnector extends AbstractOpenengsbMojo {
     protected void configure() throws MojoExecutionException {
         initDefaults();
         readUserInput();
-        initializeMavenExecutionProperties();
+        MavenExecutor genConnectorExecutor = getNewMavenExecutor(this);
+        initializeMavenExecutionProperties(genConnectorExecutor);
+        genConnectorExecutor.setRecursive(true);
+        addMavenExecutor(genConnectorExecutor);
     }
 
     protected void validateIfExecutionIsAllowed() throws MojoExecutionException {
         throwErrorIfWrapperRequestIsRecursive();
     }
 
-    protected void executeMaven() throws MojoExecutionException {
-        getNewMavenExecutor().setRecursive(true).execute(this, goals, null, null, userProperties, getProject(),
-                getSession(), getMaven());
-        postExec();
-    }
-
-    private void postExec() throws MojoExecutionException {
+    @Override
+    protected void postExec() throws MojoExecutionException {
         Tools.renameArtifactFolderAndUpdateParentPom(artifactId, connector);
         System.out.println("DON'T FORGET TO ADD THE CONNECTOR TO YOUR RELEASE/ASSEMBLY PROJECT!");
     }
@@ -118,10 +118,10 @@ public class GenConnector extends AbstractOpenengsbMojo {
         artifactId = String.format("%s%s", CONNECTOR_ARTIFACTIDPREFIX, connector);
     }
 
-    private void initializeMavenExecutionProperties() {
-        goals = Arrays.asList(new String[] { "archetype:generate" });
+    private void initializeMavenExecutionProperties(MavenExecutor executor) {
+        List<String> goals = Arrays.asList(new String[] { "archetype:generate" });
 
-        userProperties = new Properties();
+        Properties userProperties = new Properties();
 
         userProperties.put("archetypeGroupId", ARCHETYPE_GROUPID);
         userProperties.put("archetypeArtifactId", ARCHETYPE_ARTIFACTID);
@@ -141,6 +141,9 @@ public class GenConnector extends AbstractOpenengsbMojo {
         if (archetypeCatalogLocalOnly) {
             userProperties.put("archetypeCatalog", "local");
         }
+
+        executor.addGoals(goals);
+        executor.addUserProperties(userProperties);
     }
 
 }

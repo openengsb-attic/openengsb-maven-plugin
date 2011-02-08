@@ -16,8 +16,14 @@
 
 package org.openengsb.openengsbplugin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.openengsb.openengsbplugin.base.ConfiguredMojo;
+import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
 /**
  * equivalent to
@@ -40,15 +46,26 @@ public class Assemble extends ConfiguredMojo {
     }
 
     @Override
-    protected void configure() throws MojoExecutionException {
-        goals.add("install");
-        userProperties.put("maven.test.skip", "true");
-    }
-
-    @Override
     protected void validateIfExecutionIsAllowed() throws MojoExecutionException {
         throwErrorIfWrapperRequestIsRecursive();
         throwErrorIfProjectIsNotExecutedInRootDirectory();
+    }
+
+    @Override
+    protected void configureCoCMojo() throws MojoExecutionException {
+        List<String> goals = new ArrayList<String>();
+        goals.add("install");
+        Properties userProperties = new Properties();
+        userProperties.put("maven.test.skip", "true");
+
+        MavenExecutor assembleMojoExecutor = getNewMavenExecutor(this);
+        assembleMojoExecutor.addGoals(goals);
+        assembleMojoExecutor.addUserProperties(userProperties);
+
+        assembleMojoExecutor.setRecursive(true);
+        assembleMojoExecutor.addActivatedProfiles(Arrays.asList(new String[] { "nightly", cocProfile }));
+
+        addMavenExecutor(assembleMojoExecutor);
     }
 
 }

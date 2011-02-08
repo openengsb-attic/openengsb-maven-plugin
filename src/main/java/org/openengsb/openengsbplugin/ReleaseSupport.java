@@ -33,8 +33,8 @@ import org.openengsb.openengsbplugin.base.ReleaseMojo;
 public class ReleaseSupport extends ReleaseMojo {
 
     @Override
-    protected void configureReleaseMojo() {
-        activatedProfiles.add("support");
+    protected String getReleaseProfile() {
+        return "support";
     }
 
 }

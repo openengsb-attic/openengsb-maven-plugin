@@ -33,8 +33,8 @@ import org.openengsb.openengsbplugin.base.ReleaseMojo;
 public class ReleaseRC extends ReleaseMojo {
 
     @Override
-    protected void configureReleaseMojo() {
-        activatedProfiles.add("rc");
+    protected String getReleaseProfile() {
+        return "rc";
     }
 
 }

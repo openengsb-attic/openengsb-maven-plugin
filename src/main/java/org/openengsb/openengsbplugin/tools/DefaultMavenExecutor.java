@@ -26,38 +26,96 @@ import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
+import org.openengsb.openengsbplugin.base.AbstractOpenengsbMojo;
 
 public class DefaultMavenExecutor implements MavenExecutor {
 
     private static final Logger LOG = Logger.getLogger(DefaultMavenExecutor.class);
 
     private MavenExecutionRequest embeddedRequest;
-
-    private Boolean recursive = null;
-    private Boolean interActiveMode = null;
-
-    private File customPomFile = null;
-
     private File baseDir = null;
 
-    @Override
-    public void execute(AbstractMojo mojo, List<String> goals, List<String> activatedProfiles,
-            List<String> deactivatedProfiles, Properties userproperties, MavenProject project, MavenSession session,
-            Maven maven) throws MojoExecutionException {
+    private MavenSession session;
+    private Maven maven;
 
+    public DefaultMavenExecutor(AbstractOpenengsbMojo mojo) {
+        session = mojo.getSession();
+        maven = mojo.getMaven();
+        init();
+    }
+
+    private void init() {
+        LOG.trace("#############################");
+        LOG.trace(String.format("session: %s", session));
+        LOG.trace("#############################");
         baseDir = session.getRequest().getPom().getParentFile();
-
         LOG.trace(String.format("basedir: %s", baseDir.toURI().toString()));
+        embeddedRequest = generateRequestFromWrapperRequest(session);
+        clearProperties(embeddedRequest);
+    }
 
-        generateRequestFromWrapperRequest(session);
-        initExecParametersFromArguments(goals, activatedProfiles, deactivatedProfiles, userproperties);
-        changeExecutionParametersIfNecessary();
+    private void clearProperties(MavenExecutionRequest request) {
+        request.getGoals().clear();
+        request.getUserProperties().clear();
+        request.getActiveProfiles().clear();
+        request.getInactiveProfiles().clear();
+    }
 
-        printExecutionStartInfoLog(mojo.getLog());
+    public void addGoals(List<String> goals) {
+        if (goals != null) {
+            embeddedRequest.getGoals().addAll(goals);
+        }
+    }
+
+    public void addActivatedProfiles(List<String> activatedProfiles) {
+        if (activatedProfiles != null) {
+            embeddedRequest.getActiveProfiles().addAll(activatedProfiles);
+        }
+    }
+
+    public void addDeactivatedProfiles(List<String> deactivatedProfiles) {
+        if (deactivatedProfiles != null) {
+            embeddedRequest.getInactiveProfiles().addAll(deactivatedProfiles);
+        }
+    }
+
+    public void addUserProperties(Properties userproperties) {
+        if (userproperties != null) {
+            embeddedRequest.getUserProperties().putAll(userproperties);
+        }
+    }
+
+    public void addProperties(List<String> goals, List<String> activatedProfiles, List<String> deactivatedProfiles,
+            Properties userproperties) {
+        addGoals(goals);
+        addActivatedProfiles(activatedProfiles);
+        addDeactivatedProfiles(deactivatedProfiles);
+        addUserProperties(userproperties);
+    }
+
+    @Override
+    public void setRecursive(boolean recursive) {
+        embeddedRequest.setRecursive(recursive);
+    }
+
+    @Override
+    public void setInterActiveMode(boolean interactiveMode) {
+        embeddedRequest.setInteractiveMode(interactiveMode);
+    }
+
+    @Override
+    public void setCustomPomFile(File pomFile) {
+        LOG.trace(String.format("setting custom pom: %s", pomFile.toURI().toString()));
+        embeddedRequest.setPom(pomFile);
+        LOG.trace(String.format("setting basedir: %s", baseDir.toURI().toString()));
+        embeddedRequest.setBaseDirectory(baseDir);
+    }
+
+    @Override
+    public void execute(Log log) throws MojoExecutionException {
+        printExecutionStartInfoLog(log);
 
         LOG.trace(String.format("basedir of embedded request: %s", embeddedRequest.getBaseDirectory()));
         LOG.trace(String.format("pomfile of embedded request: %s", embeddedRequest.getPom().toURI().toString()));
@@ -68,48 +126,13 @@ public class DefaultMavenExecutor implements MavenExecutor {
 
         LOG.trace(String.format("basedir of embedded request: %s", embeddedRequest.getBaseDirectory()));
 
-        printExecutionEndInfoLog(mojo.getLog());
-        logAndPassOnExceptionIfAny(result, mojo.getLog());
-
+        printExecutionEndInfoLog(log);
+        logAndPassOnExceptionIfAny(result, log);
     }
 
-    private void generateRequestFromWrapperRequest(MavenSession session) {
+    private MavenExecutionRequest generateRequestFromWrapperRequest(MavenSession session) {
         MavenExecutionRequest wrapperRequest = session.getRequest();
-        embeddedRequest = DefaultMavenExecutionRequest.copy(wrapperRequest);
-    }
-
-    private void initExecParametersFromArguments(List<String> goals, List<String> activatedProfiles,
-            List<String> deactivatedProfiles, Properties userproperties) {
-        embeddedRequest.getGoals().clear();
-        embeddedRequest.getGoals().addAll(goals);
-
-        if (userproperties != null) {
-            embeddedRequest.getUserProperties().clear();
-            embeddedRequest.getUserProperties().putAll(userproperties);
-        }
-        if (activatedProfiles != null) {
-            embeddedRequest.getActiveProfiles().clear();
-            embeddedRequest.getActiveProfiles().addAll(activatedProfiles);
-        }
-        if (deactivatedProfiles != null) {
-            embeddedRequest.getInactiveProfiles().clear();
-            embeddedRequest.getInactiveProfiles().addAll(deactivatedProfiles);
-        }
-    }
-
-    private void changeExecutionParametersIfNecessary() {
-        if (recursive != null) {
-            embeddedRequest.setRecursive(recursive);
-        }
-        if (interActiveMode != null) {
-            embeddedRequest.setInteractiveMode(interActiveMode);
-        }
-        if (customPomFile != null) {
-            LOG.trace(String.format("setting custom pom: %s", customPomFile.toURI().toString()));
-            embeddedRequest.setPom(customPomFile);
-            LOG.trace(String.format("setting basedir: %s", baseDir.toURI().toString()));
-            embeddedRequest.setBaseDirectory(baseDir);
-        }
+        return DefaultMavenExecutionRequest.copy(wrapperRequest);
     }
 
     private void printExecutionStartInfoLog(Log log) {
@@ -167,24 +190,6 @@ public class DefaultMavenExecutor implements MavenExecutor {
     private void printExecutionEndInfoLog(Log log) {
         log.info(String.format("EMBEDDED EXECUTION REQUESTS - END"));
         log.info("////////////////////////////////////////////////");
-    }
-
-    @Override
-    public MavenExecutor setInterActiveMode(boolean interactiveMode) {
-        interActiveMode = interactiveMode;
-        return this;
-    }
-
-    @Override
-    public MavenExecutor setRecursive(boolean recursive) {
-        this.recursive = recursive;
-        return this;
-    }
-
-    @Override
-    public MavenExecutor setCustomPomFile(File pomFile) {
-        customPomFile = pomFile;
-        return this;
     }
 
     private void logAndPassOnExceptionIfAny(MavenExecutionResult result, Log log) throws MojoExecutionException {

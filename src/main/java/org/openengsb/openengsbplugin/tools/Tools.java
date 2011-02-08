@@ -76,7 +76,7 @@ public abstract class Tools {
     /**
      * Renames <code>&lt;module&gt;oldStr&lt;/module&gt;</code> to
      * <code>&lt;module&gt;newStr&lt;/module&gt;</code>
-     *
+     * 
      * @param oldStr
      * @param newStr
      * @throws MojoExecutionException
@@ -126,7 +126,7 @@ public abstract class Tools {
     /**
      * Reads an XML document from an input stream but doesn't validate it
      * against a scheme.
-     *
+     * 
      * @param is
      * @return
      * @throws Exception
@@ -178,7 +178,7 @@ public abstract class Tools {
      * Insert dom node into parentDoc at the given xpath (if this path doesnt
      * exist, the elements are created). Note: text content of nodes and
      * attributes aren't considered.
-     *
+     * 
      * @param parentDoc
      * @param nodeToInsert
      * @param xpath
@@ -219,8 +219,8 @@ public abstract class Tools {
         LOG.trace("insertDomNode() - end");
     }
 
-    public static int executeProcess(List<String> command, File targetDirectory)
-        throws IOException, InterruptedException {
+    public static int executeProcess(List<String> command, File targetDirectory) throws IOException,
+            InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder(command);
         processBuilder.directory(targetDirectory);
         if (targetDirectory != null) {

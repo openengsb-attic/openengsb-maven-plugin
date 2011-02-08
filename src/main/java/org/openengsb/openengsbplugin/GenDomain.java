@@ -17,26 +17,29 @@
 package org.openengsb.openengsbplugin;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.openengsb.openengsbplugin.base.AbstractOpenengsbMojo;
+import org.openengsb.openengsbplugin.base.MavenExecutorMojo;
+import org.openengsb.openengsbplugin.tools.MavenExecutor;
 import org.openengsb.openengsbplugin.tools.Tools;
 
 /**
- * guides through the creation of a domain for the OpenEngSB via the domain archetype
- *
+ * guides through the creation of a domain for the OpenEngSB via the domain
+ * archetype
+ * 
  * @goal genDomain
- *
+ * 
  * @inheritedByDefault false
- *
+ * 
  * @requiresProject true
- *
+ * 
  * @aggregator true
- *
+ * 
  */
-public class GenDomain extends AbstractOpenengsbMojo {
+public class GenDomain extends MavenExecutorMojo {
 
     private boolean archetypeCatalogLocalOnly = false;
 
@@ -68,20 +71,18 @@ public class GenDomain extends AbstractOpenengsbMojo {
     protected void configure() throws MojoExecutionException {
         initDefaults();
         readUserInput();
-        initializeMavenExecutionProperties();
+        MavenExecutor genDomainExecutor = getNewMavenExecutor(this);
+        initializeMavenExecutionProperties(genDomainExecutor);
+        genDomainExecutor.setRecursive(true);
+        addMavenExecutor(genDomainExecutor);
     }
 
     protected void validateIfExecutionIsAllowed() throws MojoExecutionException {
         throwErrorIfWrapperRequestIsRecursive();
     }
 
-    protected void executeMaven() throws MojoExecutionException {
-        getNewMavenExecutor().setRecursive(true).execute(this, goals, null, null, userProperties,
-            getProject(), getSession(), getMaven());
-        postExecute();
-    }
-    
-    private void postExecute() throws MojoExecutionException {
+    @Override
+    protected void postExec() throws MojoExecutionException {
         Tools.renameArtifactFolderAndUpdateParentPom(artifactId, domainName);
         System.out.println("DON'T FORGET TO ADD THE DOMAIN TO YOUR RELEASE/ASSEMBLY PROJECT!");
     }
@@ -102,20 +103,17 @@ public class GenDomain extends AbstractOpenengsbMojo {
 
         domainName = Tools.readValueFromStdin(sc, "Domain Name", DEFAULT_DOMAIN);
         version = Tools.readValueFromStdin(sc, "Version", defaultVersion);
-        projectName = Tools.readValueFromStdin(sc,
-            "Prefix for project names",
-            String.format("%s%s", DEFAULT_DOMAINNAME_PREFIX,
-                Tools.capitalizeFirst(domainName)));
+        projectName = Tools.readValueFromStdin(sc, "Prefix for project names",
+                String.format("%s%s", DEFAULT_DOMAINNAME_PREFIX, Tools.capitalizeFirst(domainName)));
 
         groupId = String.format("%s%s", DOMAIN_GROUPIDPREFIX, domainName);
         artifactId = String.format("%s%s", DOMAIN_ARTIFACTIDPREFIX, domainName);
     }
 
-    private void initializeMavenExecutionProperties() {
-        goals = Arrays
-            .asList(new String[]{ "archetype:generate" });
+    private void initializeMavenExecutionProperties(MavenExecutor executor) {
+        List<String> goals = Arrays.asList(new String[] { "archetype:generate" });
 
-        userProperties = new Properties();
+        Properties userProperties = new Properties();
 
         userProperties.put("archetypeGroupId", ARCHETYPE_GROUPID);
         userProperties.put("archetypeArtifactId", ARCHETYPE_ARTIFACTID);
@@ -127,14 +125,16 @@ public class GenDomain extends AbstractOpenengsbMojo {
         userProperties.put("implementationArtifactId", artifactId);
         userProperties.put("package", groupId);
         userProperties.put("name", projectName);
-        userProperties
-            .put("domainInterface", String.format("%s%s", Tools.capitalizeFirst(domainName), "Domain"));
+        userProperties.put("domainInterface", String.format("%s%s", Tools.capitalizeFirst(domainName), "Domain"));
         userProperties.put("implementationName", projectName);
 
         // local archetype catalog only
         if (archetypeCatalogLocalOnly) {
             userProperties.put("archetypeCatalog", "local");
         }
+
+        executor.addGoals(goals);
+        executor.addUserProperties(userProperties);
     }
 
 }

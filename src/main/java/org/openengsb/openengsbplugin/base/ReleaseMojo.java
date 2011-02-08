@@ -16,7 +16,12 @@
 
 package org.openengsb.openengsbplugin.base;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.maven.plugin.MojoExecutionException;
+import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
 public abstract class ReleaseMojo extends ConfiguredMojo {
 
@@ -36,22 +41,49 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
         configProfileXpath = "/rcc:releaseCommonConfig/rcc:profile";
     }
 
-    protected abstract void configureReleaseMojo();
+    protected abstract String getReleaseProfile();
 
     @Override
-    protected final void configure() throws MojoExecutionException {
-        configure();
-        goals.add("release:prepare");
-        goals.add("release:perform");
-        userProperties.put("maven.test.skip", "true");
-        userProperties.put("connectionUrl", connectionUrl);
+    protected void configureCoCMojo() throws MojoExecutionException {
+        List<String> activatedProfiles = new ArrayList<String>();
+        activatedProfiles.add(cocProfile);
+        activatedProfiles.add(getReleaseProfile());
+
+        List<String> phaseOneGoals = new ArrayList<String>();
+        phaseOneGoals.add("release:prepare");
+
+        Properties phaseOneUserProps = new Properties();
+        phaseOneUserProps.put("maven.test.skip", "true");
+
+        MavenExecutor phaseOneExecutor = getNewMavenExecutor(this);
+        phaseOneExecutor.addGoals(phaseOneGoals);
+        phaseOneExecutor.addUserProperties(phaseOneUserProps);
+        phaseOneExecutor.addActivatedProfiles(activatedProfiles);
+
+        phaseOneExecutor.setRecursive(true);
+
+        addMavenExecutor(phaseOneExecutor);
+
+        List<String> phaseTwoGoals = new ArrayList<String>();
+        phaseTwoGoals.add("release:perform");
+
+        Properties phaseTwoUserProps = new Properties();
+        phaseTwoUserProps.put("maven.test.skip", "true");
+        phaseTwoUserProps.put("connectionUrl", connectionUrl);
+
+        MavenExecutor phaseTwoExecutor = getNewMavenExecutor(this);
+        phaseTwoExecutor.addGoals(phaseTwoGoals);
+        phaseTwoExecutor.addUserProperties(phaseTwoUserProps);
+        phaseTwoExecutor.addActivatedProfiles(activatedProfiles);
+
+        phaseTwoExecutor.setRecursive(true);
+
+        addMavenExecutor(phaseTwoExecutor);
     }
 
     @Override
     protected final void validateIfExecutionIsAllowed() throws MojoExecutionException {
         throwErrorIfProjectIsNotExecutedInRootDirectory();
     }
-    
-    
 
 }
