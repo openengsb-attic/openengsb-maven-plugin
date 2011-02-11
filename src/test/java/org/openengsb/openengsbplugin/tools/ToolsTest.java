@@ -105,4 +105,15 @@ public class ToolsTest {
         assertTrue(generatedFile.delete());
     }
 
+    @Test
+    public void testRemoveNode() throws Exception {
+        Document doc = Tools.parseXMLFromString(IOUtils.toString(ClassLoader
+                .getSystemResourceAsStream("removeNode/pom.xml")));
+        String xpath = "/pom:project/pom:properties";
+        OpenEngSBMavenPluginNSContext nsContext = new OpenEngSBMavenPluginNSContext();
+        assertNotNull(Tools.evaluateXPath(xpath, doc, nsContext, XPathConstants.NODE, Node.class));
+        Tools.removeNode("/pom:project/pom:properties", doc, new OpenEngSBMavenPluginNSContext());
+        assertNull(Tools.evaluateXPath(xpath, doc, nsContext, XPathConstants.NODE, Node.class));
+    }
+
 }

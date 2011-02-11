@@ -49,6 +49,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     // #################################
 
     protected String cocProfile;
+    private String cocProfileToDeleteXpath;
 
     private static final OpenEngSBMavenPluginNSContext NS_CONTEXT = new OpenEngSBMavenPluginNSContext();
     private static final String POM_PROFILE_XPATH = "/pom:project/pom:profiles";
@@ -56,6 +57,8 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     protected static final List<File> FILES_TO_REMOVE_FINALLY = new ArrayList<File>();
     
     private File backupOriginalPom;
+    
+    private boolean executedWithoutException = false;
 
     /**
      * If set to "true" prints the temporary pom to the console.
@@ -69,16 +72,47 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         LOG.trace("-> configure");
         cocProfile = UUID.randomUUID().toString();
         configureTmpPom(cocProfile);
+        cocProfileToDeleteXpath = String.format("/pom:project/pom:profiles/pom:profile[pom:id[text()='%s']]", cocProfile);
         configureCoCMojo();
+    }
+    
+    
+
+    @Override
+    protected void postExec() throws MojoExecutionException {
+        cleanPom(cocProfile);
+        executedWithoutException = true;
     }
 
     @Override
     protected void postExecFinally() {
-        restoreOriginalPom();
+        if (!executedWithoutException) {
+            restoreOriginalPom();
+        }
         cleanUp();
     }
     
+    private void cleanPom(String profile) throws MojoExecutionException {
+        LOG.trace("cleanPom()");
+        try {
+            File pomToClean = getSession().getRequest().getPom();
+            Document docToClean = Tools.parseXMLFromString(FileUtils.readFileToString(pomToClean));
+            if (!Tools.removeNode(cocProfileToDeleteXpath, docToClean, NS_CONTEXT)) {
+                throw new MojoExecutionException("Couldn't clean the pom!");
+            }
+            FileUtils.writeStringToFile(pomToClean, Tools.serializeXML(docToClean));
+        } catch (Exception e) {
+            if (e instanceof MojoExecutionException) {
+                throw (MojoExecutionException) e;
+            } else {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
+        }
+        LOG.trace("pom cleaned successfully");
+    }
+    
     private void restoreOriginalPom() {
+        LOG.trace("-> restoreOriginalPom");
         try {
             FileUtils.copyFile(backupOriginalPom, getSession().getRequest().getPom());
         } catch (Exception e) {

@@ -243,4 +243,22 @@ public abstract class Tools {
         return p.exitValue();
     }
 
+    /**
+     * Remove node with given nodeName containing the specified text content.
+     * 
+     * @param nodeName
+     * @param textValue
+     * @param targetDocument document which to remove from
+     * @throws XPathExpressionException
+     */
+    public static boolean removeNode(String xpath, Document targetDocument,
+        NamespaceContext nsContext) throws XPathExpressionException {
+        Node nodeToRemove = evaluateXPath(xpath, targetDocument, nsContext, XPathConstants.NODE, Node.class);
+        if (nodeToRemove == null) {
+            return false;
+        }
+        nodeToRemove.getParentNode().removeChild(nodeToRemove);
+        return true;
+    }
+
 }
