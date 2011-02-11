@@ -72,7 +72,8 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         LOG.trace("-> configure");
         cocProfile = UUID.randomUUID().toString();
         configureTmpPom(cocProfile);
-        cocProfileToDeleteXpath = String.format("/pom:project/pom:profiles/pom:profile[pom:id[text()='%s']]", cocProfile);
+        cocProfileToDeleteXpath = String.format("/pom:project/pom:profiles/pom:profile[pom:id[text()='%s']]",
+                cocProfile);
         configureCoCMojo();
     }
     
