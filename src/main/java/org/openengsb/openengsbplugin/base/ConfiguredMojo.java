@@ -16,8 +16,10 @@
 
 package org.openengsb.openengsbplugin.base;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public abstract class ConfiguredMojo extends MavenExecutorMojo {
+    
+    public enum PomRestoreMode {
+        CLEAN, RESTORE_BACKUP
+    }
 
     private static final Logger LOG = Logger.getLogger(ConfiguredMojo.class);
 
@@ -58,7 +64,10 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     
     private File backupOriginalPom;
     
-    private boolean executedWithoutException = false;
+    private PomRestoreMode pomRestoreMode = PomRestoreMode.RESTORE_BACKUP;
+    private boolean pomCleanedSuccessfully = false;
+    
+    private Node licenseHeaderComment = null;
 
     /**
      * If set to "true" prints the temporary pom to the console.
@@ -77,17 +86,37 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         configureCoCMojo();
     }
     
-    
+    /**
+     * Configure how to restore (remove the unnecessary temporary profile) the
+     * pom after successful mojo execution.
+     * 
+     * @param mode <ul>
+     *        <li>{@link PomRestoreMode#RESTORE_BACKUP}: replace the pom with
+     *        the backup which has been created at mojo startup - this is the
+     *        default setting for all CoC mojos</li>
+     *        <li>{@link PomRestoreMode#CLEAN}: don't replace the pom with the
+     *        backup, only remove the profile which has been created for this
+     *        mojo run - this setting can be useful if the wrapped mojo also
+     *        modifies this pom (e.g. the maven-release-plugin changing version
+     *        numbers), so that these changes don't get lost</li>
+     *        <ul>
+     */
+    protected final void setPomRestoreMode(PomRestoreMode mode) {
+        this.pomRestoreMode = mode;
+    }
 
     @Override
     protected void postExec() throws MojoExecutionException {
-        cleanPom(cocProfile);
-        executedWithoutException = true;
+        if (pomRestoreMode == PomRestoreMode.CLEAN) {
+            cleanPom(cocProfile);
+            pomCleanedSuccessfully = true;
+        }
     }
 
     @Override
     protected void postExecFinally() {
-        if (!executedWithoutException) {
+        if (pomRestoreMode == PomRestoreMode.RESTORE_BACKUP || pomRestoreMode == PomRestoreMode.CLEAN
+                && !pomCleanedSuccessfully) {
             restoreOriginalPom();
         }
         cleanUp();
@@ -98,10 +127,19 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         try {
             File pomToClean = getSession().getRequest().getPom();
             Document docToClean = Tools.parseXMLFromString(FileUtils.readFileToString(pomToClean));
+            tryExtractLicenseHeader(docToClean);
+            
             if (!Tools.removeNode(cocProfileToDeleteXpath, docToClean, NS_CONTEXT)) {
                 throw new MojoExecutionException("Couldn't clean the pom!");
             }
-            FileUtils.writeStringToFile(pomToClean, Tools.serializeXML(docToClean));
+            
+            String cleanedContent = Tools.serializeXML(docToClean);
+            
+            if (licenseHeaderComment != null) {
+                cleanedContent = addHeader(cleanedContent);
+            }
+            
+            writeIntoPom(cleanedContent);
         } catch (Exception e) {
             if (e instanceof MojoExecutionException) {
                 throw (MojoExecutionException) e;
@@ -125,24 +163,70 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
 
     private void configureTmpPom(String profileName) throws MojoExecutionException {
         try {
-            
             backupOriginalPom = backupOriginalPom(getSession().getRequest().getPom());
             FILES_TO_REMOVE_FINALLY.add(backupOriginalPom);
             
             Document pomDocumentToConfigure = parseProjectPom();
+            tryExtractLicenseHeader(pomDocumentToConfigure);
             Document configDocument = parseDefaultConfiguration();
 
             insertConfigProfileIntoOrigPom(pomDocumentToConfigure, configDocument, profileName);
             
-            serializeIntoPom(pomDocumentToConfigure);
+            String serializedXml = Tools.serializeXML(pomDocumentToConfigure);
+            
+            if (licenseHeaderComment != null) {
+                serializedXml = addHeader(serializedXml);
+            }
+
+            if (debugMode) {
+                System.out.print(serializedXml);
+            }
+            
+            writeIntoPom(serializedXml);
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
             throw new MojoExecutionException("Couldn't configure temporary pom for this execution!", e);
         }
     }
+    
+    private String addHeader(String pomContent) throws IOException {
+        String result = "";
+        StringReader stringReader = new StringReader(pomContent);
+        BufferedReader br = new BufferedReader(stringReader);
+
+        String line;
+        do {
+            line = br.readLine();
+            result += line + "\n";
+        } while (!line.contains("<?xml"));
+
+        result += "<!--";
+        result += licenseHeaderComment.getTextContent();
+        result += "-->\n\n";
+
+        line = br.readLine();
+        while (line != null) {
+            result += line + "\n";
+            line = br.readLine();
+        }
+
+        br.close();
+        
+        licenseHeaderComment = null;
+        
+        return result;
+    }
 
     private Document parseProjectPom() throws Exception {
         return Tools.parseXMLFromString(FileUtils.readFileToString(getSession().getRequest().getPom()));
+    }
+    
+    private void tryExtractLicenseHeader(Document doc) {
+        Node firstNode = doc.getChildNodes().item(0);
+        if (firstNode.getNodeType() == Node.COMMENT_NODE) {
+            LOG.trace(String.format("found license header with content:\n%s", firstNode.getNodeValue()));
+            licenseHeaderComment = doc.removeChild(firstNode);
+        }
     }
 
     private Document parseDefaultConfiguration() throws Exception {
@@ -163,14 +247,8 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         Tools.insertDomNode(originalPom, importedLicenseCheckProfileNode, POM_PROFILE_XPATH, NS_CONTEXT);
     }
 
-    private void serializeIntoPom(Document pomDocument) throws IOException, URISyntaxException {
-        String serializedXml = Tools.serializeXML(pomDocument);
-
-        if (debugMode) {
-            System.out.print(serializedXml);
-        }
-
-        FileUtils.writeStringToFile(getSession().getRequest().getPom(), serializedXml + "\n");
+    private void writeIntoPom(String content) throws IOException, URISyntaxException {
+        FileUtils.writeStringToFile(getSession().getRequest().getPom(), content + "\n");
     }
 
     private void cleanUp() {

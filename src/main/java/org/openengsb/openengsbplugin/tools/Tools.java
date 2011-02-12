@@ -44,6 +44,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 public abstract class Tools {
@@ -166,6 +167,9 @@ public abstract class Tools {
         try {
             sw = new StringWriter();
             XMLSerializer xmlSerializer = new XMLSerializer();
+            OutputFormat of = new OutputFormat(doc, doc.getXmlEncoding(), false);
+            of.setStandalone(doc.getXmlStandalone());
+            xmlSerializer.setOutputFormat(of);
             xmlSerializer.setOutputCharStream(sw);
             xmlSerializer.serialize(doc);
             return sw.toString();
