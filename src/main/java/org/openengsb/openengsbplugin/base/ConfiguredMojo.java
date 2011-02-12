@@ -127,7 +127,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         try {
             Document docToClean = parseProjectPom();
             
-            if (!Tools.removeNode(cocProfileToDeleteXpath, docToClean, NS_CONTEXT)) {
+            if (!Tools.removeNode(cocProfileToDeleteXpath, docToClean, NS_CONTEXT, true)) {
                 throw new MojoExecutionException("Couldn't clean the pom!");
             }
             

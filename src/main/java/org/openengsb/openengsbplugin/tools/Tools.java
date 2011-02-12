@@ -250,18 +250,29 @@ public abstract class Tools {
     /**
      * Remove node with given nodeName containing the specified text content.
      * 
-     * @param nodeName
-     * @param textValue
-     * @param targetDocument document which to remove from
+     * @param xpath
+     * @param targetDocument
+     * @param nsContext
+     * @param removeParent if you want to remove the parent if the node
+     *        specified by the xpath was the only child, then set this to true
+     * @return true if the node specified by the xpath has been found and
+     *         removed
      * @throws XPathExpressionException
      */
-    public static boolean removeNode(String xpath, Document targetDocument,
-        NamespaceContext nsContext) throws XPathExpressionException {
+    public static boolean removeNode(String xpath, Document targetDocument, NamespaceContext nsContext,
+            boolean removeParent) throws XPathExpressionException {
         Node nodeToRemove = evaluateXPath(xpath, targetDocument, nsContext, XPathConstants.NODE, Node.class);
         if (nodeToRemove == null) {
             return false;
         }
-        nodeToRemove.getParentNode().removeChild(nodeToRemove);
+        Node parent = nodeToRemove.getParentNode();
+        parent.removeChild(nodeToRemove);
+        if (removeParent && parent.getChildNodes().getLength() == 0) {
+            Node parentParent = parent.getParentNode();
+            if (parentParent != null) {
+                parentParent.removeChild(parent);
+            }
+        }
         return true;
     }
 
