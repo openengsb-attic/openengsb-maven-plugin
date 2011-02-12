@@ -112,7 +112,7 @@ public class ToolsTest {
         String xpath = "/pom:project/pom:properties";
         OpenEngSBMavenPluginNSContext nsContext = new OpenEngSBMavenPluginNSContext();
         assertNotNull(Tools.evaluateXPath(xpath, doc, nsContext, XPathConstants.NODE, Node.class));
-        Tools.removeNode("/pom:project/pom:properties", doc, new OpenEngSBMavenPluginNSContext());
+        Tools.removeNode("/pom:project/pom:properties", doc, new OpenEngSBMavenPluginNSContext(), false);
         assertNull(Tools.evaluateXPath(xpath, doc, nsContext, XPathConstants.NODE, Node.class));
     }
 
