@@ -79,6 +79,8 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
         phaseTwoExecutor.setRecursive(true);
 
         addMavenExecutor(phaseTwoExecutor);
+        
+        setPomRestoreMode(PomRestoreMode.CLEAN);
     }
 
     @Override
