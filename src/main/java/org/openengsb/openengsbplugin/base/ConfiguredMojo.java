@@ -125,19 +125,13 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     private void cleanPom(String profile) throws MojoExecutionException {
         LOG.trace("cleanPom()");
         try {
-            File pomToClean = getSession().getRequest().getPom();
-            Document docToClean = Tools.parseXMLFromString(FileUtils.readFileToString(pomToClean));
-            tryExtractLicenseHeader(docToClean);
+            Document docToClean = parseProjectPom();
             
             if (!Tools.removeNode(cocProfileToDeleteXpath, docToClean, NS_CONTEXT)) {
                 throw new MojoExecutionException("Couldn't clean the pom!");
             }
             
             String cleanedContent = Tools.serializeXML(docToClean);
-            
-            if (licenseHeaderComment != null) {
-                cleanedContent = addHeader(cleanedContent);
-            }
             
             writeIntoPom(cleanedContent);
         } catch (Exception e) {
@@ -167,16 +161,11 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
             FILES_TO_REMOVE_FINALLY.add(backupOriginalPom);
             
             Document pomDocumentToConfigure = parseProjectPom();
-            tryExtractLicenseHeader(pomDocumentToConfigure);
             Document configDocument = parseDefaultConfiguration();
 
             insertConfigProfileIntoOrigPom(pomDocumentToConfigure, configDocument, profileName);
             
             String serializedXml = Tools.serializeXML(pomDocumentToConfigure);
-            
-            if (licenseHeaderComment != null) {
-                serializedXml = addHeader(serializedXml);
-            }
 
             if (debugMode) {
                 System.out.print(serializedXml);
@@ -218,7 +207,9 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     }
 
     private Document parseProjectPom() throws Exception {
-        return Tools.parseXMLFromString(FileUtils.readFileToString(getSession().getRequest().getPom()));
+        Document doc = Tools.parseXMLFromString(FileUtils.readFileToString(getSession().getRequest().getPom()));
+        tryExtractLicenseHeader(doc);
+        return doc;
     }
     
     private void tryExtractLicenseHeader(Document doc) {
@@ -248,6 +239,9 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     }
 
     private void writeIntoPom(String content) throws IOException, URISyntaxException {
+        if (licenseHeaderComment != null) {
+            content = addHeader(content);
+        }
         FileUtils.writeStringToFile(getSession().getRequest().getPom(), content + "\n");
     }
 
