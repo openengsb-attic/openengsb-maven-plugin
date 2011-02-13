@@ -109,8 +109,8 @@ public class Provision extends AbstractOpenengsbMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (provisionArchivePathWindows != null && provisionExecutionPathWindows != null && isWindowsSystem() ||
-                provisionArchivePathUnix != null && provisionExecutionPathUnix != null && !isWindowsSystem()) {
+        if (provisionArchivePathWindows != null && provisionExecutionPathWindows != null && isWindowsSystem()
+                || provisionArchivePathUnix != null && provisionExecutionPathUnix != null && !isWindowsSystem()) {
             executeProvision();
         }
     }
