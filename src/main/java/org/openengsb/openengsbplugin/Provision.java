@@ -40,13 +40,13 @@ import org.ops4j.pax.runner.platform.PlatformException;
 import org.ops4j.pax.runner.platform.internal.CommandLineBuilder;
 
 /**
- * Equivalent to execute karaf or karaf.bat per hand after build by mvn clean
- * install in a (typically) assembly directory.
- * 
+ * Equivalent to execute karaf or karaf.bat per hand after build by mvn clean install in a (typically) assembly
+ * directory.
+ *
  * @goal provision
- * 
+ *
  * @inheritedByDefault false
- * 
+ *
  * @requiresProject true
  */
 public class Provision extends AbstractOpenengsbMojo {
@@ -54,53 +54,47 @@ public class Provision extends AbstractOpenengsbMojo {
     private static final String RUNNER = "target/runner/";
 
     /**
-     * This setting should be done in the one of the assembly folders and have
-     * to point to the final directory where the karaf system, etc configs and
-     * so on consist.
-     * 
+     * This setting should be done in the one of the assembly folders and have to point to the final directory where the
+     * karaf system, etc configs and so on consist.
+     *
      * @parameter expression="${provisionPathUnix}"
      */
     private String provisionArchivePathUnix;
 
     /**
      * The path to the executable in the unix archive file
-     * 
+     *
      * @parameter expression="${provisionExecutionPathUnix}"
      */
     private String provisionExecutionPathUnix;
 
     /**
-     * Sometimes it's required that some executable files, provided in
-     * {@link #provisionExecutionPathUnix} execute other files which have to
-     * made executable to work correctly on themselves. Those files should be
-     * specified here.
-     * 
+     * Sometimes it's required that some executable files, provided in {@link #provisionExecutionPathUnix} execute other
+     * files which have to made executable to work correctly on themselves. Those files should be specified here.
+     *
      * @parameter expression="${additionalRequiredExecutionPathUnix}"
      */
     private String[] additionalRequiredExecutionPathUnix;
 
     /**
-     * This setting should be done in the one of the assembly folders and have
-     * to point to the final directory where the karaf system, etc configs and
-     * so on consist.
-     * 
+     * This setting should be done in the one of the assembly folders and have to point to the final directory where the
+     * karaf system, etc configs and so on consist.
+     *
      * @parameter expression="${provisionPathWindows}"
      */
     private String provisionArchivePathWindows;
 
     /**
      * The path to the executable in the windows archive file
-     * 
+     *
      * @parameter expression="${provisionExecutionPathWindows}"
      */
     private String provisionExecutionPathWindows;
 
     /**
-     * Sometimes it's required that some executable files, provided in
-     * {@link #provisionExecutionPathWindows} execute other files which have to
-     * made executable to work correctly on themselves. Those files should be
-     * specified here.
-     * 
+     * Sometimes it's required that some executable files, provided in {@link #provisionExecutionPathWindows} execute
+     * other files which have to made executable to work correctly on themselves. Those files should be specified here.
+     *
      * @parameter expression="${additionalRequiredExecutionPathWindows}"
      */
     private String[] additionalRequiredExecutionPathWindows;
@@ -115,23 +109,31 @@ public class Provision extends AbstractOpenengsbMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (provisionArchivePathWindows != null && provisionExecutionPathWindows != null
-                && provisionArchivePathUnix != null && provisionExecutionPathUnix != null) {
-            CommandLineBuilder command = new CommandLineBuilder();
-            Map<String, String> environment = new HashMap<String, String>();
-            environment.put("KARAF_DEBUG", "true");
-            if (System.getProperty("os.name").startsWith("Windows")) {
-                extractWindowsArchive();
-                createExecutableCommand(command, provisionExecutionPathWindows);
-                makeAdditionalRequiredFilesExecutable(additionalRequiredExecutionPathWindows);
-                environment.put("JAVA_OPTS", "-Djline.terminal=jline.UnsupportedTerminal");
-            } else {
-                extractUnixArchive();
-                createExecutableCommand(command, provisionExecutionPathUnix);
-                makeAdditionalRequiredFilesExecutable(additionalRequiredExecutionPathUnix);
-            }
-            executePlatform(command, environment);
+        if (provisionArchivePathWindows != null && provisionExecutionPathWindows != null && isWindowsSystem() ||
+                provisionArchivePathUnix != null && provisionExecutionPathUnix != null && !isWindowsSystem()) {
+            executeProvision();
         }
+    }
+
+    private void executeProvision() throws MojoFailureException {
+        CommandLineBuilder command = new CommandLineBuilder();
+        Map<String, String> environment = new HashMap<String, String>();
+        environment.put("KARAF_DEBUG", "true");
+        if (isWindowsSystem()) {
+            extractWindowsArchive();
+            createExecutableCommand(command, provisionExecutionPathWindows);
+            makeAdditionalRequiredFilesExecutable(additionalRequiredExecutionPathWindows);
+            environment.put("JAVA_OPTS", "-Djline.terminal=jline.UnsupportedTerminal");
+        } else {
+            extractUnixArchive();
+            createExecutableCommand(command, provisionExecutionPathUnix);
+            makeAdditionalRequiredFilesExecutable(additionalRequiredExecutionPathUnix);
+        }
+        executePlatform(command, environment);
+    }
+
+    private boolean isWindowsSystem() {
+        return System.getProperty("os.name").startsWith("Windows");
     }
 
     private void executePlatform(CommandLineBuilder command, Map<String, String> environment)
