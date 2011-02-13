@@ -44,6 +44,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 public abstract class Tools {
@@ -166,6 +167,9 @@ public abstract class Tools {
         try {
             sw = new StringWriter();
             XMLSerializer xmlSerializer = new XMLSerializer();
+            OutputFormat of = new OutputFormat(doc, doc.getXmlEncoding(), false);
+            of.setStandalone(doc.getXmlStandalone());
+            xmlSerializer.setOutputFormat(of);
             xmlSerializer.setOutputCharStream(sw);
             xmlSerializer.serialize(doc);
             return sw.toString();
@@ -241,6 +245,24 @@ public abstract class Tools {
 
         p.waitFor();
         return p.exitValue();
+    }
+
+    /**
+     * Remove node with given nodeName containing the specified text content.
+     * 
+     * @param nodeName
+     * @param textValue
+     * @param targetDocument document which to remove from
+     * @throws XPathExpressionException
+     */
+    public static boolean removeNode(String xpath, Document targetDocument,
+        NamespaceContext nsContext) throws XPathExpressionException {
+        Node nodeToRemove = evaluateXPath(xpath, targetDocument, nsContext, XPathConstants.NODE, Node.class);
+        if (nodeToRemove == null) {
+            return false;
+        }
+        nodeToRemove.getParentNode().removeChild(nodeToRemove);
+        return true;
     }
 
 }
