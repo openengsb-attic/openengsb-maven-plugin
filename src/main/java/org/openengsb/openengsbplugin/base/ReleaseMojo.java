@@ -45,40 +45,40 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
 
     @Override
     protected void configureCoCMojo() throws MojoExecutionException {
-        List<String> activatedProfiles = new ArrayList<String>();
-        activatedProfiles.add(cocProfile);
-        activatedProfiles.add(getReleaseProfile());
+        List<String> activatedProfiles1and2 = new ArrayList<String>();
+        activatedProfiles1and2.add(cocProfile);
+        activatedProfiles1and2.add(getReleaseProfile());
 
-        List<String> phaseOneGoals = new ArrayList<String>();
-        phaseOneGoals.add("release:prepare");
+        List<String> phase1Goals = new ArrayList<String>();
+        phase1Goals.add("release:prepare");
 
-        Properties phaseOneUserProps = new Properties();
-        phaseOneUserProps.put("maven.test.skip", "true");
+        Properties phase1UserProps = new Properties();
+        phase1UserProps.put("maven.test.skip", "true");
 
-        MavenExecutor phaseOneExecutor = getNewMavenExecutor(this);
-        phaseOneExecutor.addGoals(phaseOneGoals);
-        phaseOneExecutor.addUserProperties(phaseOneUserProps);
-        phaseOneExecutor.addActivatedProfiles(activatedProfiles);
+        MavenExecutor phase1Executor = getNewMavenExecutor(this);
+        phase1Executor.addGoals(phase1Goals);
+        phase1Executor.addUserProperties(phase1UserProps);
+        phase1Executor.addActivatedProfiles(activatedProfiles1and2);
 
-        phaseOneExecutor.setRecursive(true);
+        phase1Executor.setRecursive(true);
 
-        addMavenExecutor(phaseOneExecutor);
+        addMavenExecutor(phase1Executor);
 
-        List<String> phaseTwoGoals = new ArrayList<String>();
-        phaseTwoGoals.add("release:perform");
+        List<String> phase2Goals = new ArrayList<String>();
+        phase2Goals.add("release:perform");
 
-        Properties phaseTwoUserProps = new Properties();
-        phaseTwoUserProps.put("maven.test.skip", "true");
-        phaseTwoUserProps.put("connectionUrl", connectionUrl);
+        Properties phase2UserProps = new Properties();
+        phase2UserProps.put("maven.test.skip", "true");
+        phase2UserProps.put("connectionUrl", connectionUrl);
 
-        MavenExecutor phaseTwoExecutor = getNewMavenExecutor(this);
-        phaseTwoExecutor.addGoals(phaseTwoGoals);
-        phaseTwoExecutor.addUserProperties(phaseTwoUserProps);
-        phaseTwoExecutor.addActivatedProfiles(activatedProfiles);
+        MavenExecutor phase2Executor = getNewMavenExecutor(this);
+        phase2Executor.addGoals(phase2Goals);
+        phase2Executor.addUserProperties(phase2UserProps);
+        phase2Executor.addActivatedProfiles(activatedProfiles1and2);
 
-        phaseTwoExecutor.setRecursive(true);
+        phase2Executor.setRecursive(true);
 
-        addMavenExecutor(phaseTwoExecutor);
+        addMavenExecutor(phase2Executor);
         
         setPomRestoreMode(PomRestoreMode.CLEAN);
     }
@@ -87,5 +87,32 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
     protected final void validateIfExecutionIsAllowed() throws MojoExecutionException {
         throwErrorIfProjectIsNotExecutedInRootDirectory();
     }
+
+    @Override
+    protected void afterPomCleaned() throws MojoExecutionException {
+        commitCleanedPom();
+    }
+    
+    private void commitCleanedPom() throws MojoExecutionException {
+        List<String> phase3Goals = new ArrayList<String>();
+        phase3Goals.add("scm:checkin");
+
+        Properties phase3UserProps = new Properties();
+        phase3UserProps.put("message", "[openengsb-maven-plugin]: cleaning pom");
+        phase3UserProps.put("pushChanges", "false");
+
+        MavenExecutor phase3Exectuor = getNewMavenExecutor(this);
+        phase3Exectuor.addGoals(phase3Goals);
+        phase3Exectuor.addUserProperties(phase3UserProps);
+
+        /*
+         * execute directly (instead of addMavenExecutor - the maven executors
+         * queue has been already worked off)
+         */
+
+        phase3Exectuor.execute(getLog());
+
+    }
+    
 
 }

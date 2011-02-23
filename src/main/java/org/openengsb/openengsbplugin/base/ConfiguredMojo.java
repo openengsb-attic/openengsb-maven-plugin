@@ -106,15 +106,19 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     }
 
     @Override
-    protected void postExec() throws MojoExecutionException {
+    protected final void postExec() throws MojoExecutionException {
         if (pomRestoreMode == PomRestoreMode.CLEAN) {
             cleanPom(cocProfile);
             pomCleanedSuccessfully = true;
+            afterPomCleaned();
         }
+    }
+    
+    protected void afterPomCleaned() throws MojoExecutionException {
     }
 
     @Override
-    protected void postExecFinally() {
+    protected final void postExecFinally() {
         if (pomRestoreMode == PomRestoreMode.RESTORE_BACKUP || pomRestoreMode == PomRestoreMode.CLEAN
                 && !pomCleanedSuccessfully) {
             restoreOriginalPom();

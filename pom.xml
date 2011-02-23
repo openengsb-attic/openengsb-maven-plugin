@@ -22,8 +22,6 @@
   <properties>
     <!-- base settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- versions -->
-    <mvn.scm.api.version>1.4</mvn.scm.api.version>
   </properties>
 
   <parent>
@@ -67,12 +65,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <!-- local -->
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-api</artifactId>
-      <version>${mvn.scm.api.version}</version>
-    </dependency>
     <!-- openengsb -->
     <dependency>
       <groupId>org.apache.maven</groupId>
