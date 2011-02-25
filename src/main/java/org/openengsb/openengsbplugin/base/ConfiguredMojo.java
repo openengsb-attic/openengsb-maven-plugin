@@ -114,6 +114,12 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         }
     }
     
+    /**
+     * Template method which may be overwritten by subclasses. It gets executed
+     * iff {@link PomRestoreMode} is set to {@link PomRestoreMode#CLEAN} and the
+     * pom has been cleaned successfully. For usage example see
+     * {@link ReleaseMojo#afterPomCleaned()}
+     */
     protected void afterPomCleaned() throws MojoExecutionException {
     }
 
