@@ -77,10 +77,6 @@ public abstract class Tools {
     /**
      * Renames <code>&lt;module&gt;oldStr&lt;/module&gt;</code> to
      * <code>&lt;module&gt;newStr&lt;/module&gt;</code>
-     * 
-     * @param oldStr
-     * @param newStr
-     * @throws MojoExecutionException
      */
     public static void renameSubmoduleInPom(String oldStr, String newStr) throws MojoExecutionException {
         try {
@@ -125,12 +121,7 @@ public abstract class Tools {
     }
 
     /**
-     * Reads an XML document from an input stream but doesn't validate it
-     * against a scheme.
-     * 
-     * @param is
-     * @return
-     * @throws Exception
+     * Parses an XML document from {@code str}
      */
     public static Document parseXMLFromString(String str) throws Exception {
         StringReader sr = null;
@@ -179,15 +170,9 @@ public abstract class Tools {
     }
 
     /**
-     * Insert dom node into parentDoc at the given xpath (if this path doesnt
+     * Insert dom node into {@code parentDoc} at the given {@code xpath} (if this path doesnt
      * exist, the elements are created). Note: text content of nodes and
      * attributes aren't considered.
-     * 
-     * @param parentDoc
-     * @param nodeToInsert
-     * @param xpath
-     * @param nsContext
-     * @throws XPathExpressionException
      */
     public static void insertDomNode(Document parentDoc, Node nodeToInsert, String xpath, NamespaceContext nsContext)
         throws XPathExpressionException {
@@ -248,20 +233,29 @@ public abstract class Tools {
     }
 
     /**
-     * Remove node with given nodeName containing the specified text content.
-     * 
-     * @param nodeName
-     * @param textValue
-     * @param targetDocument document which to remove from
-     * @throws XPathExpressionException
+     * Remove node with given {@code xpath} from {@code targetDocument}. When
+     * {@code removeParent} is set to {@code true} the parent node will also be
+     * removed if the removed node was the only child. The method returns
+     * {@code true} if the node specified by {@code xpath} has been found and
+     * successfully removed from its parent node.
      */
-    public static boolean removeNode(String xpath, Document targetDocument,
-        NamespaceContext nsContext) throws XPathExpressionException {
+    public static boolean removeNode(String xpath, Document targetDocument, NamespaceContext nsContext,
+            boolean removeParent) throws XPathExpressionException {
         Node nodeToRemove = evaluateXPath(xpath, targetDocument, nsContext, XPathConstants.NODE, Node.class);
         if (nodeToRemove == null) {
             return false;
         }
-        nodeToRemove.getParentNode().removeChild(nodeToRemove);
+        Node parent = nodeToRemove.getParentNode();
+        if (parent == null) {
+            return false;
+        }
+        parent.removeChild(nodeToRemove);
+        if (removeParent && parent.getChildNodes().getLength() == 0) {
+            Node parentParent = parent.getParentNode();
+            if (parentParent != null) {
+                parentParent.removeChild(parent);
+            }
+        }
         return true;
     }
 

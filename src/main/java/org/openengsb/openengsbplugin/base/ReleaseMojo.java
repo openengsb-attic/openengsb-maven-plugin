@@ -24,6 +24,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
 public abstract class ReleaseMojo extends ConfiguredMojo {
+    
+    private static final String CLEANED_POM_COMMIT_MSG = "[openengsb-maven-plugin]: cleaning pom";
 
     /**
      * The SCM URL to checkout from. If omitted, the one from the
@@ -43,42 +45,45 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
 
     protected abstract String getReleaseProfile();
 
+    /*
+     * configures maven executors for release:prepare and release:perform
+     */
     @Override
-    protected void configureCoCMojo() throws MojoExecutionException {
-        List<String> activatedProfiles = new ArrayList<String>();
-        activatedProfiles.add(cocProfile);
-        activatedProfiles.add(getReleaseProfile());
+    protected final void configureCoCMojo() throws MojoExecutionException {
+        List<String> activatedProfilesForPrepareAndPerform = new ArrayList<String>();
+        activatedProfilesForPrepareAndPerform.add(cocProfile);
+        activatedProfilesForPrepareAndPerform.add(getReleaseProfile());
 
-        List<String> phaseOneGoals = new ArrayList<String>();
-        phaseOneGoals.add("release:prepare");
+        List<String> releasePrepareGoals = new ArrayList<String>();
+        releasePrepareGoals.add("release:prepare");
 
-        Properties phaseOneUserProps = new Properties();
-        phaseOneUserProps.put("maven.test.skip", "true");
+        Properties releasePrepareUserProps = new Properties();
+        releasePrepareUserProps.put("maven.test.skip", "true");
 
-        MavenExecutor phaseOneExecutor = getNewMavenExecutor(this);
-        phaseOneExecutor.addGoals(phaseOneGoals);
-        phaseOneExecutor.addUserProperties(phaseOneUserProps);
-        phaseOneExecutor.addActivatedProfiles(activatedProfiles);
+        MavenExecutor releasePrepareExecutor = getNewMavenExecutor(this);
+        releasePrepareExecutor.addGoals(releasePrepareGoals);
+        releasePrepareExecutor.addUserProperties(releasePrepareUserProps);
+        releasePrepareExecutor.addActivatedProfiles(activatedProfilesForPrepareAndPerform);
 
-        phaseOneExecutor.setRecursive(true);
+        releasePrepareExecutor.setRecursive(true);
 
-        addMavenExecutor(phaseOneExecutor);
+        addMavenExecutor(releasePrepareExecutor);
 
-        List<String> phaseTwoGoals = new ArrayList<String>();
-        phaseTwoGoals.add("release:perform");
+        List<String> releasePerformGoals = new ArrayList<String>();
+        releasePerformGoals.add("release:perform");
 
-        Properties phaseTwoUserProps = new Properties();
-        phaseTwoUserProps.put("maven.test.skip", "true");
-        phaseTwoUserProps.put("connectionUrl", connectionUrl);
+        Properties releasePerformUserProps = new Properties();
+        releasePerformUserProps.put("maven.test.skip", "true");
+        releasePerformUserProps.put("connectionUrl", connectionUrl);
 
-        MavenExecutor phaseTwoExecutor = getNewMavenExecutor(this);
-        phaseTwoExecutor.addGoals(phaseTwoGoals);
-        phaseTwoExecutor.addUserProperties(phaseTwoUserProps);
-        phaseTwoExecutor.addActivatedProfiles(activatedProfiles);
+        MavenExecutor releasePerformExecutor = getNewMavenExecutor(this);
+        releasePerformExecutor.addGoals(releasePerformGoals);
+        releasePerformExecutor.addUserProperties(releasePerformUserProps);
+        releasePerformExecutor.addActivatedProfiles(activatedProfilesForPrepareAndPerform);
 
-        phaseTwoExecutor.setRecursive(true);
+        releasePerformExecutor.setRecursive(true);
 
-        addMavenExecutor(phaseTwoExecutor);
+        addMavenExecutor(releasePerformExecutor);
         
         setPomRestoreMode(PomRestoreMode.CLEAN);
     }
@@ -87,5 +92,36 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
     protected final void validateIfExecutionIsAllowed() throws MojoExecutionException {
         throwErrorIfProjectIsNotExecutedInRootDirectory();
     }
+
+    @Override
+    protected final void afterPomCleaned() throws MojoExecutionException {
+        commitCleanedPom();
+    }
+
+    /*
+     * commit cleaned pom after the maven executors for release:prepare and
+     * release:perform have finshed work
+     */
+    private void commitCleanedPom() throws MojoExecutionException {
+        List<String> finalCommitGoals = new ArrayList<String>();
+        finalCommitGoals.add("scm:checkin");
+
+        Properties finalCommitUserProps = new Properties();
+        finalCommitUserProps.put("message", CLEANED_POM_COMMIT_MSG);
+        finalCommitUserProps.put("pushChanges", "false");
+
+        MavenExecutor finalCommitExecutor = getNewMavenExecutor(this);
+        finalCommitExecutor.addGoals(finalCommitGoals);
+        finalCommitExecutor.addUserProperties(finalCommitUserProps);
+
+        /*
+         * execute directly (instead of addMavenExecutor - the maven executors
+         * queue has been already worked off)
+         */
+
+        finalCommitExecutor.execute(getLog());
+
+    }
+    
 
 }

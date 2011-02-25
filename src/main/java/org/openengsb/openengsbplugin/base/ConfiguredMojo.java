@@ -106,15 +106,25 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     }
 
     @Override
-    protected void postExec() throws MojoExecutionException {
+    protected final void postExec() throws MojoExecutionException {
         if (pomRestoreMode == PomRestoreMode.CLEAN) {
             cleanPom(cocProfile);
             pomCleanedSuccessfully = true;
+            afterPomCleaned();
         }
+    }
+    
+    /**
+     * Template method which may be overwritten by subclasses. It gets executed
+     * iff {@link PomRestoreMode} is set to {@link PomRestoreMode#CLEAN} and the
+     * pom has been cleaned successfully. For usage example see
+     * {@link ReleaseMojo#afterPomCleaned()}
+     */
+    protected void afterPomCleaned() throws MojoExecutionException {
     }
 
     @Override
-    protected void postExecFinally() {
+    protected final void postExecFinally() {
         if (pomRestoreMode == PomRestoreMode.RESTORE_BACKUP || pomRestoreMode == PomRestoreMode.CLEAN
                 && !pomCleanedSuccessfully) {
             restoreOriginalPom();
@@ -127,7 +137,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         try {
             Document docToClean = parseProjectPom();
             
-            if (!Tools.removeNode(cocProfileToDeleteXpath, docToClean, NS_CONTEXT)) {
+            if (!Tools.removeNode(cocProfileToDeleteXpath, docToClean, NS_CONTEXT, true)) {
                 throw new MojoExecutionException("Couldn't clean the pom!");
             }
             
