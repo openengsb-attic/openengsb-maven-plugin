@@ -57,7 +57,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     protected String cocProfile;
     private String cocProfileToDeleteXpath;
 
-    private static final OpenEngSBMavenPluginNSContext NS_CONTEXT = new OpenEngSBMavenPluginNSContext();
+    protected static final OpenEngSBMavenPluginNSContext NS_CONTEXT = new OpenEngSBMavenPluginNSContext();
     private static final String POM_PROFILE_XPATH = "/pom:project/pom:profiles";
 
     protected static final List<File> FILES_TO_REMOVE_FINALLY = new ArrayList<File>();
@@ -172,6 +172,8 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
             
             Document pomDocumentToConfigure = parseProjectPom();
             Document configDocument = parseDefaultConfiguration();
+            
+            modifyMojoConfiguration(configDocument);
 
             insertConfigProfileIntoOrigPom(pomDocumentToConfigure, configDocument, profileName);
             
@@ -186,6 +188,14 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
             LOG.warn(e.getMessage(), e);
             throw new MojoExecutionException("Couldn't configure temporary pom for this execution!", e);
         }
+    }
+    
+    /**
+     * If you want to modify the xml configuration of the mojo (e.g. add some
+     * configuration which you only know at runtime), then this is the place
+     * where to do it. Simply overwrite this method in your subclass.
+     */
+    protected void modifyMojoConfiguration(Document mojoConfiguration) throws MojoExecutionException {
     }
     
     private String addHeader(String pomContent) throws IOException {

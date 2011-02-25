@@ -18,21 +18,31 @@
 -->
 
 <checkstyleMojo xmlns="http://www.openengsb.org/tooling/openengsb-maven-plugin/checkstyleMojo">
-    <profile>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>${maven.plugin.checkstyle.version}</version>
-            <configuration>
-              <consoleOutput>true</consoleOutput>
-              <enableRulesSummary>true</enableRulesSummary>
-              <failsOnError>true</failsOnError>
-              <includeTestSourceDirectory>true</includeTestSourceDirectory>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
+  <profile>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>${maven.plugin.checkstyle.version}</version>
+          <configuration>
+            <!-- the config location is added dynamically by the mojo -->
+            <consoleOutput>true</consoleOutput>
+            <enableRulesSummary>true</enableRulesSummary>
+            <failsOnError>true</failsOnError>
+            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <id>check</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>checkstyle</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
 </checkstyleMojo>
