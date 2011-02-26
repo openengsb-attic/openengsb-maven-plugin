@@ -26,7 +26,7 @@
     <configuration>
       <excludes>
         <!-- openengs-maven-plugin test resources -->
-        <exclude>src/main/resources/licenseMojo/header.txt</exclude>
+        <exclude>src/main/resources/license/header.txt</exclude>
         <eclude>src/test/resources/licenseCheck/fail/src/main/java/org/openengsb/licensecheck/App.java</eclude>
         <exclude>src/test/resources/licenseFormat/backup/Without_Header.java</exclude>
         <!-- #################################### -->

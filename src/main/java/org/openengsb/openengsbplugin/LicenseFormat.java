@@ -33,9 +33,7 @@ import org.openengsb.openengsbplugin.base.LicenseMojo;
 public class LicenseFormat extends LicenseMojo {
 
     public LicenseFormat() {
-        wrappedGoal = "validate";
-        headerPath = "license/header.txt";
-        configs.add("license/licenseConfig.xml");
+        mavenLicensePluginGoal = "format";
     }
 
 }

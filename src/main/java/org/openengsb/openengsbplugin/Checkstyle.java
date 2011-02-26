@@ -1,25 +1,20 @@
 package org.openengsb.openengsbplugin;
 
 import java.io.File;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.openengsb.openengsbplugin.base.ConfiguredMojo;
 import org.openengsb.openengsbplugin.tools.MavenExecutor;
 import org.openengsb.openengsbplugin.tools.Tools;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-// TODO rename to prePush
 
 /**
  *  
@@ -34,8 +29,6 @@ import org.w3c.dom.Node;
  */
 public class Checkstyle extends ConfiguredMojo {
     
-    private static final Logger LOG = Logger.getLogger(Checkstyle.class);
-    
     private String checkstylePath = "checkstyle/checkstyle.xml";
 
     private File checkstyleCheckerConfig;
@@ -47,6 +40,7 @@ public class Checkstyle extends ConfiguredMojo {
     @Override
     protected void configureCoCMojo() throws MojoExecutionException {        
         List<String> goals = new ArrayList<String>();
+        // TODO make this clean optional via command line parameter for wrapping checkstyle in pre push mojo
         goals.add("clean");
         goals.add("install");
         
@@ -91,12 +85,10 @@ public class Checkstyle extends ConfiguredMojo {
     private void insertCheckstyleConfigLocation(Document configuredPom) throws XPathExpressionException {
         Node node = configuredPom.createElementNS(POM_NS_URI, "configLocation");
         node.setTextContent(checkstyleCheckerConfig.toURI().toString());
-
-        Node configurationNode = Tools.evaluateXPath(cocProfileXpath + "/pom:build/pom:plugins/pom:plugin"
+        
+        Tools.insertDomNode(configuredPom, node, cocProfileXpath + "/pom:build/pom:plugins/pom:plugin"
                 + "[pom:groupId='org.apache.maven.plugins' and pom:artifactId='maven-checkstyle-plugin']"
-                + "/pom:configuration", configuredPom, NS_CONTEXT, XPathConstants.NODE, Node.class);
-
-        configurationNode.appendChild(node);
+                + "/pom:configuration", NS_CONTEXT);
     }
     
     
