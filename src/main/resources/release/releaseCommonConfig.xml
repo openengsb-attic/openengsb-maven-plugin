@@ -17,7 +17,7 @@
 
 -->
 
-<config xmlns="http://www.openengsb.org/openengsb-maven-plugin/CoCProfile">
+<c:config xmlns="http://maven.apache.org/POM/4.0.0" xmlns:c="http://www.openengsb.org/openengsb-maven-plugin/CoCProfile">
   <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-release-plugin</artifactId>
@@ -34,4 +34,4 @@
       </checkModificationExcludes>
     </configuration>
   </plugin>
-</config>
+</c:config>

@@ -36,13 +36,9 @@ public class Checkstyle extends ConfiguredMojo {
     
     private static final Logger LOG = Logger.getLogger(Checkstyle.class);
     
-    private String checkstylePath = "checkstyleMojo/checkstyle.xml";
+    private String checkstylePath = "checkstyle/checkstyle.xml";
 
     private File checkstyleCheckerConfig;
-    
-    private static final String CHECKSTYLE_CHECKER_PROFILE_XPATH = "/cs:profile";
-    private static final String CHECKSTYLE_CHECKER_CONFIG_XPATH = CHECKSTYLE_CHECKER_PROFILE_XPATH
-            + "/cs:build/cs:plugins/cs:plugin/cs:configuration";
 
     public Checkstyle() {
         configs.add("checkstyle/checkstyleConfig.xml");
@@ -82,24 +78,23 @@ public class Checkstyle extends ConfiguredMojo {
     }
 
     @Override
-    protected final void modifyMojoConfiguration(Document mojoConfiguration) throws MojoExecutionException {
-        // TODO adapt xpath for this
-//        try {
-//            checkstyleCheckerConfig = createCheckstyleCheckerConfiguration();
-//            FILES_TO_REMOVE_FINALLY.add(checkstyleCheckerConfig);
-//            insertCheckstyleConfigLocation(mojoConfiguration);
-//        } catch (XPathExpressionException e) {
-//            throw new MojoExecutionException(e.getMessage(), e);
-//        }
+    protected final void modifyMojoConfiguration(Document configuredPom) throws MojoExecutionException {
+        try {
+            checkstyleCheckerConfig = createCheckstyleCheckerConfiguration();
+            FILES_TO_REMOVE_FINALLY.add(checkstyleCheckerConfig);
+            insertCheckstyleConfigLocation(configuredPom);
+        } catch (XPathExpressionException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
     }
     
-    private void insertCheckstyleConfigLocation(Document mojoConfiguration)
-        throws XPathExpressionException {
-        Node node = mojoConfiguration.createElement("configLocation");
+    private void insertCheckstyleConfigLocation(Document configuredPom) throws XPathExpressionException {
+        Node node = configuredPom.createElementNS(POM_NS_URI, "configLocation");
         node.setTextContent(checkstyleCheckerConfig.toURI().toString());
 
-        Node configurationNode = Tools.evaluateXPath(CHECKSTYLE_CHECKER_CONFIG_XPATH, mojoConfiguration, NS_CONTEXT,
-                XPathConstants.NODE, Node.class);
+        Node configurationNode = Tools.evaluateXPath(cocProfileXpath + "/pom:build/pom:plugins/pom:plugin"
+                + "[pom:groupId='org.apache.maven.plugins' and pom:artifactId='maven-checkstyle-plugin']"
+                + "/pom:configuration", configuredPom, NS_CONTEXT, XPathConstants.NODE, Node.class);
 
         configurationNode.appendChild(node);
     }

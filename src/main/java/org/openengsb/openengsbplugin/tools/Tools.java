@@ -175,13 +175,14 @@ public abstract class Tools {
         }
     }
 
+    // TODO update comment for nsprefix
     /**
      * Insert dom node into {@code parentDoc} at the given {@code xpath} (if this path doesnt
      * exist, the elements are created). Note: text content of nodes and
      * attributes aren't considered.
      */
-    public static void insertDomNode(Document parentDoc, Node nodeToInsert, String xpath, NamespaceContext nsContext)
-        throws XPathExpressionException {
+    public static void insertDomNode(Document parentDoc, Node nodeToInsert, String xpath, NamespaceContext nsContext,
+            String nsPrefix) throws XPathExpressionException {
         LOG.trace("insertDomNode() - start");
         String[] tokens = xpath.split("/");
         String currPath = "";
@@ -201,7 +202,7 @@ public abstract class Tools {
                 // namespace prefix
                 elemName = elemName.replaceAll(".*:", "");
                 LOG.trace(String.format("elementName: %s", elemName));
-                Element element = parentDoc.createElement(elemName);
+                Element element = parentDoc.createElementNS(nsContext.getNamespaceURI(nsPrefix), elemName);
                 parent.appendChild(element);
                 result = element;
             }

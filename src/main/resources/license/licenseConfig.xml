@@ -17,7 +17,7 @@
 
 -->
 
-<config xmlns="http://www.openengsb.org/openengsb-maven-plugin/CoCProfile">
+<c:config xmlns="http://maven.apache.org/POM/4.0.0" xmlns:c="http://www.openengsb.org/openengsb-maven-plugin/CoCProfile">
   <plugin>
     <inherited>false</inherited>
     <groupId>com.mycila.maven-license-plugin</groupId>
@@ -81,4 +81,4 @@
       </execution>
     </executions>
   </plugin>
-</config>
+</c:config>
