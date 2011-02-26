@@ -195,7 +195,6 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         }
     }
     
-    // TODO update comment
     /**
      * If you want to modify the xml configuration of the mojo (e.g. add some
      * configuration which you only know at runtime), then this is the place
@@ -288,7 +287,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
 
         Node importedProfileNode = originalPom.importNode(profileNode, true);
 
-        Tools.insertDomNode(originalPom, importedProfileNode, POM_PROFILE_XPATH, NS_CONTEXT, "pom");
+        Tools.insertDomNode(originalPom, importedProfileNode, POM_PROFILE_XPATH, NS_CONTEXT);
     }
 
     private void writeIntoPom(String content) throws IOException, URISyntaxException {

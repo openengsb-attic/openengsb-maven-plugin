@@ -90,8 +90,7 @@ public class ToolsTest {
         licenseCheckMojoProfileNode.insertBefore(idNode, licenseCheckMojoProfileNode.getFirstChild());
         Node importedNode = thePom.importNode(licenseCheckMojoProfileNode, true);
 
-        Tools.insertDomNode(thePom, importedNode, "/pom:project/pom:profiles", new OpenEngSBMavenPluginNSContext(),
-                "pom");
+        Tools.insertDomNode(thePom, importedNode, "/pom:project/pom:profiles", new OpenEngSBMavenPluginNSContext());
 
         String serializedXml = Tools.serializeXML(thePom);
         File generatedFile = Tools.generateTmpFile(serializedXml, ".xml");
