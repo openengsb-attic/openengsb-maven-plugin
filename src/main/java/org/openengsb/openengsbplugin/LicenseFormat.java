@@ -34,7 +34,7 @@ public class LicenseFormat extends LicenseMojo {
 
     public LicenseFormat() {
         wrappedGoal = "validate";
-        headerPath = "licenseMojo/header.txt";
+        headerPath = "license/header.txt";
         configs.add("license/licenseConfig.xml");
     }
 

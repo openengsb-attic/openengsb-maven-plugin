@@ -178,9 +178,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
             
             modifyMojoConfiguration(configDocument);
 
-            Document profileDoc = collectConfigsAndBuildProfile();
-
-            insertConfigProfileIntoOrigPom(profileDoc.getFirstChild(), pomDocumentToConfigure, configDocument,
+            insertConfigProfileIntoOrigPom(pomDocumentToConfigure, configDocument,
                     profileName);
 
             String serializedXml = Tools.serializeXML(pomDocumentToConfigure);
@@ -271,14 +269,16 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         buildElement.appendChild(pluginsElement);
         
         for (Node pluginNode : pluginNodes) {
-            pluginsElement.appendChild(pluginNode);
+            pluginsElement.appendChild(profileDoc.importNode(pluginNode, true));
         }
 
         return profileDoc;
     }
 
-    private void insertConfigProfileIntoOrigPom(Node profileNode, Document originalPom, Document mojoConfiguration,
+    private void insertConfigProfileIntoOrigPom(Document originalPom, Document mojoConfiguration,
             String profileName) throws XPathExpressionException {
+        Node profileNode = mojoConfiguration.getFirstChild();
+        
         Node idNode = mojoConfiguration.createElement("id");
         idNode.setTextContent(profileName);
         profileNode.insertBefore(idNode, profileNode.getFirstChild());

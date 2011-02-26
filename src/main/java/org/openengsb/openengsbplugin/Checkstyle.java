@@ -40,7 +40,7 @@ public class Checkstyle extends ConfiguredMojo {
 
     private File checkstyleCheckerConfig;
     
-    private static final String CHECKSTYLE_CHECKER_PROFILE_XPATH = "/cs:checkstyleMojo/cs:profile";
+    private static final String CHECKSTYLE_CHECKER_PROFILE_XPATH = "/cs:profile";
     private static final String CHECKSTYLE_CHECKER_CONFIG_XPATH = CHECKSTYLE_CHECKER_PROFILE_XPATH
             + "/cs:build/cs:plugins/cs:plugin/cs:configuration";
 
@@ -83,13 +83,14 @@ public class Checkstyle extends ConfiguredMojo {
 
     @Override
     protected final void modifyMojoConfiguration(Document mojoConfiguration) throws MojoExecutionException {
-        try {
-            checkstyleCheckerConfig = createCheckstyleCheckerConfiguration();
-            FILES_TO_REMOVE_FINALLY.add(checkstyleCheckerConfig);
-            insertCheckstyleConfigLocation(mojoConfiguration);
-        } catch (XPathExpressionException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-        }
+        // TODO adapt xpath for this
+//        try {
+//            checkstyleCheckerConfig = createCheckstyleCheckerConfiguration();
+//            FILES_TO_REMOVE_FINALLY.add(checkstyleCheckerConfig);
+//            insertCheckstyleConfigLocation(mojoConfiguration);
+//        } catch (XPathExpressionException e) {
+//            throw new MojoExecutionException(e.getMessage(), e);
+//        }
     }
     
     private void insertCheckstyleConfigLocation(Document mojoConfiguration)

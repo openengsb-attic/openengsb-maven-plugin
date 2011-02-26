@@ -34,7 +34,7 @@ public class LicenseCheck extends LicenseMojo {
 
     public LicenseCheck() {
         wrappedGoal = "validate";
-        headerPath = "licenseMojo/header.txt";
+        headerPath = "license/header.txt";
         configs.add("license/licenseConfig.xml");
     }
 
