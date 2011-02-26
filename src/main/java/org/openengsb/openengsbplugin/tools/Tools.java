@@ -30,6 +30,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -43,6 +44,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
@@ -122,8 +124,12 @@ public abstract class Tools {
 
     /**
      * Parses an XML document from {@code str}
+     * @throws ParserConfigurationException 
+     * @throws IOException 
+     * @throws SAXException 
      */
-    public static Document parseXMLFromString(String str) throws Exception {
+    public static Document parseXMLFromString(String str) throws ParserConfigurationException, SAXException,
+            IOException {
         StringReader sr = null;
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -257,6 +263,13 @@ public abstract class Tools {
             }
         }
         return true;
+    }
+    
+    public static Document newDOM() throws ParserConfigurationException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        return db.newDocument();
     }
 
 }

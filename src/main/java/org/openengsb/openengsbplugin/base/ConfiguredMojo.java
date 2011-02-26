@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -35,7 +36,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.openengsb.openengsbplugin.tools.Tools;
 import org.openengsb.openengsbplugin.xml.OpenEngSBMavenPluginNSContext;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public abstract class ConfiguredMojo extends MavenExecutorMojo {
     
@@ -48,9 +52,8 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     // #################################
     // set these in subclass constructor
     // #################################
-
-    protected String configProfileXpath;
-    protected String configPath;
+    
+    protected ArrayList<String> configs = new ArrayList<String>();
 
     // #################################
 
@@ -171,12 +174,15 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
             FILES_TO_REMOVE_FINALLY.add(backupOriginalPom);
             
             Document pomDocumentToConfigure = parseProjectPom();
-            Document configDocument = parseDefaultConfiguration();
+            Document configDocument = collectConfigsAndBuildProfile();
             
             modifyMojoConfiguration(configDocument);
 
-            insertConfigProfileIntoOrigPom(pomDocumentToConfigure, configDocument, profileName);
-            
+            Document profileDoc = collectConfigsAndBuildProfile();
+
+            insertConfigProfileIntoOrigPom(profileDoc.getFirstChild(), pomDocumentToConfigure, configDocument,
+                    profileName);
+
             String serializedXml = Tools.serializeXML(pomDocumentToConfigure);
 
             if (debugMode) {
@@ -240,22 +246,46 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         }
     }
 
-    private Document parseDefaultConfiguration() throws Exception {
-        return Tools.parseXMLFromString(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(configPath)));
+    private Document collectConfigsAndBuildProfile() throws ParserConfigurationException, SAXException, IOException,
+            XPathExpressionException {
+
+        ArrayList<Node> pluginNodes = new ArrayList<Node>();
+
+        for (String configFilePath : configs) {
+            Document configDocument = Tools.parseXMLFromString(IOUtils.toString(getClass().getClassLoader()
+                    .getResourceAsStream(configFilePath)));
+            Node configNode = Tools.evaluateXPath("/c:config", configDocument, NS_CONTEXT, XPathConstants.NODE,
+                    Node.class);
+            NodeList children = configNode.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                pluginNodes.add(children.item(i));
+            }
+        }
+        
+        Document profileDoc = Tools.newDOM();
+        Element profileElement = profileDoc.createElement("profile");
+        profileDoc.appendChild(profileElement);
+        Element buildElement = profileDoc.createElement("build");
+        profileElement.appendChild(buildElement);
+        Element pluginsElement = profileDoc.createElement("plugins");
+        buildElement.appendChild(pluginsElement);
+        
+        for (Node pluginNode : pluginNodes) {
+            pluginsElement.appendChild(pluginNode);
+        }
+
+        return profileDoc;
     }
 
-    private void insertConfigProfileIntoOrigPom(Document originalPom, Document mojoConfiguration, String profileName)
-        throws XPathExpressionException {
-        Node licenseCheckMojoProfileNode = Tools.evaluateXPath(configProfileXpath, mojoConfiguration, NS_CONTEXT,
-                XPathConstants.NODE, Node.class);
-
+    private void insertConfigProfileIntoOrigPom(Node profileNode, Document originalPom, Document mojoConfiguration,
+            String profileName) throws XPathExpressionException {
         Node idNode = mojoConfiguration.createElement("id");
         idNode.setTextContent(profileName);
-        licenseCheckMojoProfileNode.insertBefore(idNode, licenseCheckMojoProfileNode.getFirstChild());
+        profileNode.insertBefore(idNode, profileNode.getFirstChild());
 
-        Node importedLicenseCheckProfileNode = originalPom.importNode(licenseCheckMojoProfileNode, true);
+        Node importedProfileNode = originalPom.importNode(profileNode, true);
 
-        Tools.insertDomNode(originalPom, importedLicenseCheckProfileNode, POM_PROFILE_XPATH, NS_CONTEXT);
+        Tools.insertDomNode(originalPom, importedProfileNode, POM_PROFILE_XPATH, NS_CONTEXT);
     }
 
     private void writeIntoPom(String content) throws IOException, URISyntaxException {

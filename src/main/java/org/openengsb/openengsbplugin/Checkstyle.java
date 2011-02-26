@@ -45,8 +45,7 @@ public class Checkstyle extends ConfiguredMojo {
             + "/cs:build/cs:plugins/cs:plugin/cs:configuration";
 
     public Checkstyle() {
-        configPath = "checkstyleMojo/checkstyleConfig.xml";
-        configProfileXpath = CHECKSTYLE_CHECKER_PROFILE_XPATH;
+        configs.add("checkstyle/checkstyleConfig.xml");
     }
 
     @Override

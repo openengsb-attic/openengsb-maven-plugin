@@ -42,8 +42,7 @@ import org.openengsb.openengsbplugin.tools.MavenExecutor;
 public class Assemble extends ConfiguredMojo {
 
     public Assemble() {
-        configPath = "assembleMojo/assembleConfig.xml";
-        configProfileXpath = "/am:assembleMojo/am:profile";
+        configs.add("assemble/assembleConfig.xml");
     }
 
     @Override
