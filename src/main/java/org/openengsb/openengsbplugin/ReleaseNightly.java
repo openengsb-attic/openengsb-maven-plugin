@@ -39,8 +39,7 @@ import org.openengsb.openengsbplugin.tools.MavenExecutor;
 public class ReleaseNightly extends ConfiguredMojo {
 
     public ReleaseNightly() {
-        configPath = "releaseMojo/nightlyConfig.xml";
-        configProfileXpath = "/rn:releaseNightlyMojo/rn:profile";
+        configs.add("release/nightlyConfig.xml");
     }
 
     @Override

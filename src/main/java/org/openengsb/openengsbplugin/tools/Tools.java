@@ -30,6 +30,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -43,6 +44,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
@@ -122,8 +124,12 @@ public abstract class Tools {
 
     /**
      * Parses an XML document from {@code str}
+     * @throws ParserConfigurationException 
+     * @throws IOException 
+     * @throws SAXException 
      */
-    public static Document parseXMLFromString(String str) throws Exception {
+    public static Document parseXMLFromString(String str) throws ParserConfigurationException, SAXException,
+            IOException {
         StringReader sr = null;
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -170,9 +176,9 @@ public abstract class Tools {
     }
 
     /**
-     * Insert dom node into {@code parentDoc} at the given {@code xpath} (if this path doesnt
-     * exist, the elements are created). Note: text content of nodes and
-     * attributes aren't considered.
+     * Insert dom node into {@code parentDoc} at the given {@code xpath} (if
+     * this path doesnt exist, the elements are created). Note: text content of
+     * nodes and attributes aren't considered.
      */
     public static void insertDomNode(Document parentDoc, Node nodeToInsert, String xpath, NamespaceContext nsContext)
         throws XPathExpressionException {
@@ -192,10 +198,18 @@ public abstract class Tools {
                 String elemName = null;
                 // attribute filter
                 elemName = tokens[i].replaceAll("\\[.*\\]", "");
-                // namespace prefix
-                elemName = elemName.replaceAll(".*:", "");
+
+                Element element = null;
+
+                if (elemName.contains(":")) {
+                    String[] elemenNameTokens = elemName.split(":");
+                    String prefix = elemenNameTokens[0];
+                    elemName = elemenNameTokens[1];
+                    element = parentDoc.createElementNS(nsContext.getNamespaceURI(prefix), elemName);
+                } else {
+                    element = parentDoc.createElement(elemName);
+                }
                 LOG.trace(String.format("elementName: %s", elemName));
-                Element element = parentDoc.createElement(elemName);
                 parent.appendChild(element);
                 result = element;
             }
@@ -257,6 +271,13 @@ public abstract class Tools {
             }
         }
         return true;
+    }
+    
+    public static Document newDOM() throws ParserConfigurationException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        return db.newDocument();
     }
 
 }

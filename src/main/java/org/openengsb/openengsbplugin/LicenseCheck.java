@@ -33,10 +33,7 @@ import org.openengsb.openengsbplugin.base.LicenseMojo;
 public class LicenseCheck extends LicenseMojo {
 
     public LicenseCheck() {
-        wrappedGoal = "validate";
-        headerPath = "licenseMojo/header.txt";
-        configPath = "licenseMojo/licenseCheckConfig.xml";
-        configProfileXpath = "/lc:licenseCheckMojo/lc:profile";
+        mavenLicensePluginGoal = "check";
     }
 
 }

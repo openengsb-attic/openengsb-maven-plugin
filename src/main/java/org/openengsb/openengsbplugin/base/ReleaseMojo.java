@@ -39,8 +39,7 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
     protected String connectionUrl;
 
     public ReleaseMojo() {
-        configPath = "releaseMojo/releaseCommonConfig.xml";
-        configProfileXpath = "/rcc:releaseCommonConfig/rcc:profile";
+        configs.add("release/releaseCommonConfig.xml");
     }
 
     protected abstract String getReleaseProfile();

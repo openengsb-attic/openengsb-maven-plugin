@@ -23,8 +23,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPathConstants;
 
 import org.apache.commons.io.FileUtils;
@@ -36,7 +36,9 @@ import org.w3c.dom.Node;
 
 public class ToolsTest {
 
-    private static final String LICENSECHECK_CONFIG_PATH = "licenseMojo/licenseCheckConfig.xml";
+    private static final String LICENSECHECK_CONFIG_PATH = "license/licenseConfig.xml";
+    private static final NamespaceContext NS_CONTEXT = new OpenEngSBMavenPluginNSContext();
+    private static final String POM_NS_URI = NS_CONTEXT.getNamespaceURI("pom");
 
     @Test
     public void testExpectedInput() {
@@ -58,9 +60,8 @@ public class ToolsTest {
     public void testXPath() throws Exception {
         Document doc = Tools.parseXMLFromString(IOUtils.toString(ClassLoader
                 .getSystemResourceAsStream(LICENSECHECK_CONFIG_PATH)));
-        Node n = Tools.evaluateXPath("//lc:licenseCheckMojo", doc, new OpenEngSBMavenPluginNSContext(),
-                XPathConstants.NODE, Node.class);
-        assertEquals("licenseCheckMojo", n.getLocalName());
+        Node n = Tools.evaluateXPath("//c:config", doc, NS_CONTEXT, XPathConstants.NODE, Node.class);
+        assertEquals("config", n.getLocalName());
     }
 
     @Test
@@ -77,29 +78,21 @@ public class ToolsTest {
     public void testInsertDomNode() throws Exception {
         Document thePom = Tools.parseXMLFromString(IOUtils.toString(ClassLoader
                 .getSystemResourceAsStream("licenseCheck/pass/pom.xml")));
-        Document config = Tools.parseXMLFromString(IOUtils.toString(ClassLoader
-                .getSystemResourceAsStream(LICENSECHECK_CONFIG_PATH)));
 
-        Node licenseCheckMojoProfileNode = Tools.evaluateXPath("/lc:licenseCheckMojo/lc:profile", config,
-                new OpenEngSBMavenPluginNSContext(), XPathConstants.NODE, Node.class);
+        Document d = Tools.newDOM();
+        Node nodeB = d.createElementNS(POM_NS_URI, "b");
 
-        String profileName = UUID.randomUUID().toString();
+        Node importedNode = thePom.importNode(nodeB, true);
 
-        Node idNode = config.createElement("id");
-        idNode.setTextContent(profileName);
-        licenseCheckMojoProfileNode.insertBefore(idNode, licenseCheckMojoProfileNode.getFirstChild());
-        Node importedNode = thePom.importNode(licenseCheckMojoProfileNode, true);
-
-        Tools.insertDomNode(thePom, importedNode, "/pom:project/pom:profiles", new OpenEngSBMavenPluginNSContext());
+        Tools.insertDomNode(thePom, importedNode, "/pom:project/pom:a", NS_CONTEXT);
 
         String serializedXml = Tools.serializeXML(thePom);
         File generatedFile = Tools.generateTmpFile(serializedXml, ".xml");
 
         Document generatedPom = Tools.parseXMLFromString(FileUtils.readFileToString(generatedFile));
 
-        Node foundNode = Tools.evaluateXPath(
-                String.format("/pom:project/pom:profiles/pom:profile/pom:id[text()='%s']", profileName), generatedPom,
-                new OpenEngSBMavenPluginNSContext(), XPathConstants.NODE, Node.class);
+        Node foundNode = Tools.evaluateXPath("/pom:project/pom:a/pom:b", generatedPom, NS_CONTEXT, XPathConstants.NODE,
+                Node.class);
 
         assertNotNull(foundNode);
         assertTrue(generatedFile.delete());
@@ -110,10 +103,9 @@ public class ToolsTest {
         Document doc = Tools.parseXMLFromString(IOUtils.toString(ClassLoader
                 .getSystemResourceAsStream("removeNode/pom.xml")));
         String xpath = "/pom:project/pom:properties";
-        OpenEngSBMavenPluginNSContext nsContext = new OpenEngSBMavenPluginNSContext();
-        assertNotNull(Tools.evaluateXPath(xpath, doc, nsContext, XPathConstants.NODE, Node.class));
-        Tools.removeNode("/pom:project/pom:properties", doc, new OpenEngSBMavenPluginNSContext(), false);
-        assertNull(Tools.evaluateXPath(xpath, doc, nsContext, XPathConstants.NODE, Node.class));
+        assertNotNull(Tools.evaluateXPath(xpath, doc, NS_CONTEXT, XPathConstants.NODE, Node.class));
+        Tools.removeNode("/pom:project/pom:properties", doc, NS_CONTEXT, false);
+        assertNull(Tools.evaluateXPath(xpath, doc, NS_CONTEXT, XPathConstants.NODE, Node.class));
     }
 
 }
