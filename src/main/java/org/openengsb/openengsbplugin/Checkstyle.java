@@ -48,25 +48,33 @@ public class Checkstyle extends ConfiguredMojo {
     private String checkstylePath = "checkstyle/checkstyle.xml";
 
     private File checkstyleCheckerConfig;
+    
+    /**
+     * If set to "true" the clean phase is skipped.
+     * 
+     * @parameter expression="${skipClean}" default-value="false"
+     */
+    private boolean skipClean;
 
     public Checkstyle() {
         configs.add("checkstyle/checkstyleConfig.xml");
     }
 
     @Override
-    protected void configureCoCMojo() throws MojoExecutionException {        
+    protected void configureCoCMojo() throws MojoExecutionException {
         List<String> goals = new ArrayList<String>();
-        // TODO make this clean optional via command line parameter for wrapping checkstyle in pre push mojo
-        goals.add("clean");
+        if (!skipClean) {
+            goals.add("clean");
+        }
         goals.add("install");
-        
+
         Properties userProperties = new Properties();
         userProperties.put("maven.test.skip", "true");
-        
+
         MavenExecutor checkstyleMojoExecutor = getNewMavenExecutor(this);
         checkstyleMojoExecutor.addGoals(goals);
         checkstyleMojoExecutor.addUserProperties(userProperties);
-        
+
         checkstyleMojoExecutor.setRecursive(true);
         checkstyleMojoExecutor.addActivatedProfiles(Arrays.asList(new String[] { cocProfile }));
 
