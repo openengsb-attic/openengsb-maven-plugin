@@ -45,7 +45,7 @@ import org.w3c.dom.Node;
  */
 public class Checkstyle extends ConfiguredMojo {
     
-    private String checkstyleCheckerPathRsrc = "checkstyle/checkstyle.xml";
+    private static final String CHECKSTYLE_CHECKER_PATH_RSRC = "checkstyle/checkstyle.xml";
 
     private File checkstyleCheckerConfigTmp;
     
@@ -85,10 +85,10 @@ public class Checkstyle extends ConfiguredMojo {
     protected void validateIfExecutionIsAllowed() throws MojoExecutionException {
     }
     
-    public static File createCheckstyleCheckerConfiguration(String rsrcPath) throws MojoExecutionException {
+    public static File createCheckstyleCheckerConfiguration() throws MojoExecutionException {
         try {
             String content = IOUtils.toString(Checkstyle.class.getClassLoader()
-                    .getResourceAsStream(rsrcPath));
+                    .getResourceAsStream(CHECKSTYLE_CHECKER_PATH_RSRC));
             File generatedFile = Tools.generateTmpFile(content, ".xml");
             return generatedFile;
         } catch (Exception e) {
@@ -99,7 +99,7 @@ public class Checkstyle extends ConfiguredMojo {
     @Override
     protected final void modifyMojoConfiguration(Document configuredPom) throws MojoExecutionException {
         try {
-            checkstyleCheckerConfigTmp = createCheckstyleCheckerConfiguration(checkstyleCheckerPathRsrc);
+            checkstyleCheckerConfigTmp = createCheckstyleCheckerConfiguration();
             FILES_TO_REMOVE_FINALLY.add(checkstyleCheckerConfigTmp);
             insertCheckstyleConfigLocation(configuredPom, cocProfileXpath, checkstyleCheckerConfigTmp);
         } catch (XPathExpressionException e) {
