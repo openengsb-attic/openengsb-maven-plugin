@@ -14,6 +14,8 @@
     limitations under the License.
 ====
 
+The openengsb-maven-plugin is a plugin for Apache Maven, intended to simplify various activities (creating domains or connectors, building a release artifact of the whole project etc.) when developing based on the OpenEngSB.
+
 Setup Project and Kick Off
 ==========================
 Execute "mvn install"
@@ -29,5 +31,5 @@ mvn openengsb:prePush
 Further Information
 -------------------
 This readme gives only the most important information for developers. General information about this project is located at http://openengsb.org.
-The detailed developer and user documentation is located at http://openengsb.org/manual/index.html.
+The detailed developer and user documentation is located at file:///win/d/cd_flex/openengsb/docs/manual/target/manual/html-single/openengsb-manual.html#developer.quickstart.tools.mavenplugin.
 
