@@ -45,9 +45,9 @@ import org.w3c.dom.Node;
  */
 public class Checkstyle extends ConfiguredMojo {
     
-    private String checkstylePath = "checkstyle/checkstyle.xml";
+    private String checkstyleCheckerPathRsrc = "checkstyle/checkstyle.xml";
 
-    private File checkstyleCheckerConfig;
+    private File checkstyleCheckerConfigTmp;
     
     /**
      * If set to "true" the clean phase is skipped.
@@ -85,10 +85,11 @@ public class Checkstyle extends ConfiguredMojo {
     protected void validateIfExecutionIsAllowed() throws MojoExecutionException {
     }
     
-    private File createCheckstyleCheckerConfiguration() throws MojoExecutionException {
+    public static File createCheckstyleCheckerConfiguration(String rsrcPath) throws MojoExecutionException {
         try {
-            String headerString = IOUtils.toString(getClass().getClassLoader().getResourceAsStream(checkstylePath));
-            File generatedFile = Tools.generateTmpFile(headerString, ".xml");
+            String content = IOUtils.toString(Checkstyle.class.getClassLoader()
+                    .getResourceAsStream(rsrcPath));
+            File generatedFile = Tools.generateTmpFile(content, ".xml");
             return generatedFile;
         } catch (Exception e) {
             throw new MojoExecutionException("Couldn't create checkstyle temp file!", e);
@@ -98,23 +99,22 @@ public class Checkstyle extends ConfiguredMojo {
     @Override
     protected final void modifyMojoConfiguration(Document configuredPom) throws MojoExecutionException {
         try {
-            checkstyleCheckerConfig = createCheckstyleCheckerConfiguration();
-            FILES_TO_REMOVE_FINALLY.add(checkstyleCheckerConfig);
-            insertCheckstyleConfigLocation(configuredPom);
+            checkstyleCheckerConfigTmp = createCheckstyleCheckerConfiguration(checkstyleCheckerPathRsrc);
+            FILES_TO_REMOVE_FINALLY.add(checkstyleCheckerConfigTmp);
+            insertCheckstyleConfigLocation(configuredPom, cocProfileXpath, checkstyleCheckerConfigTmp);
         } catch (XPathExpressionException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
     
-    private void insertCheckstyleConfigLocation(Document configuredPom) throws XPathExpressionException {
+    public static void insertCheckstyleConfigLocation(Document configuredPom, String profileXpath, File configFile)
+        throws XPathExpressionException {
         Node node = configuredPom.createElementNS(POM_NS_URI, "configLocation");
-        node.setTextContent(checkstyleCheckerConfig.toURI().toString());
-        
-        Tools.insertDomNode(configuredPom, node, cocProfileXpath + "/pom:build/pom:plugins/pom:plugin"
+        node.setTextContent(configFile.toURI().toString());
+
+        Tools.insertDomNode(configuredPom, node, profileXpath + "/pom:build/pom:plugins/pom:plugin"
                 + "[pom:groupId='org.apache.maven.plugins' and pom:artifactId='maven-checkstyle-plugin']"
                 + "/pom:configuration", NS_CONTEXT);
     }
-    
-    
 
 }
