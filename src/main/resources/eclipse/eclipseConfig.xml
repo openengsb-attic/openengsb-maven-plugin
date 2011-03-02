@@ -29,6 +29,14 @@
           <url>https://github.com/openengsb/openengsb-maven-plugin/raw/OPENENGSB-1020/openengsb_eclipse_mojo/src/main/resources/eclipse/eclipseCheckstyle.xml</url>
         </file>
       </additionalConfig>
+      <additionalBuildcommands>
+        <buildCommand>
+          <name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
+        </buildCommand>
+      </additionalBuildcommands>
+      <additionalProjectnatures>
+        <projectnature>net.sf.eclipsecs.core.CheckstyleNature</projectnature>
+      </additionalProjectnatures>
     </configuration>
   </plugin>
 </c:config>
