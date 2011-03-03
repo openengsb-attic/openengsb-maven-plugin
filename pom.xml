@@ -25,7 +25,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- plugin version -->
     <maven.plugin.checkstyle.version>2.6</maven.plugin.checkstyle.version>
-    <maven.noticeplugin.version>1.0.4</maven.noticeplugin.version>
     <!-- maven-notice-plugin -->
     <notice.template>https://github.com/openengsb/openengsb/raw/master/etc/notice/NOTICE.template</notice.template>
   </properties>
@@ -33,7 +32,7 @@
   <parent>
     <groupId>org.openengsb</groupId>
     <artifactId>openengsb-root</artifactId>
-    <version>8</version>
+    <version>9-SNAPSHOT</version>
   </parent>
 
   <groupId>org.openengsb</groupId>
@@ -119,7 +118,6 @@
     <plugin>
       <groupId>org.jasig.maven</groupId>
       <artifactId>maven-notice-plugin</artifactId>
-      <version>${maven.noticeplugin.version}</version>
       <configuration>
         <noticeTemplate>${notice.template}</noticeTemplate>
       </configuration>
