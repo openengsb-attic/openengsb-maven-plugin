@@ -20,11 +20,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.openengsb.openengsbplugin.tools.MavenExecutor;
 import org.openengsb.openengsbplugin.tools.Tools;
@@ -32,6 +32,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public abstract class LicenseMojo extends ConfiguredMojo {
+    
+    private static final Logger LOG = Logger.getLogger(LicenseMojo.class);
 
     // #################################
     // set these in subclass constructor
@@ -51,22 +53,11 @@ public abstract class LicenseMojo extends ConfiguredMojo {
 
     @Override
     protected final void configureCoCMojo() throws MojoExecutionException {
-
-        licenseHeaderFile = readHeaderStringAndwriteHeaderIntoTmpFile();
-        FILES_TO_REMOVE_FINALLY.add(licenseHeaderFile);
-
         List<String> goals = new ArrayList<String>();
         goals.add(WRAPPED_GOAL);
 
-        Properties userProperties = new Properties();
-        userProperties.put("license.header", licenseHeaderFile.toURI().toString());
-        userProperties.put("license.failIfMissing", "true");
-        userProperties.put("license.aggregate", "true");
-        userProperties.put("license.strictCheck", "true");
-
         MavenExecutor licenseMojoExecutor = getNewMavenExecutor(this);
         licenseMojoExecutor.addGoals(goals);
-        licenseMojoExecutor.addUserProperties(userProperties);
 
         licenseMojoExecutor.setRecursive(true);
         licenseMojoExecutor.addActivatedProfiles(Arrays.asList(new String[] { cocProfile }));
@@ -78,10 +69,9 @@ public abstract class LicenseMojo extends ConfiguredMojo {
     protected final void validateIfExecutionIsAllowed() throws MojoExecutionException {
     }
 
-    private File readHeaderStringAndwriteHeaderIntoTmpFile() throws MojoExecutionException {
+    public static File readHeaderStringAndwriteHeaderIntoTmpFile() throws MojoExecutionException {
         try {
-
-            String headerString = IOUtils.toString(getClass().getClassLoader().getResourceAsStream(HEADER_PATH));
+            String headerString = IOUtils.toString(LicenseMojo.class.getClassLoader().getResourceAsStream(HEADER_PATH));
             File generatedFile = Tools.generateTmpFile(headerString, ".txt");
             return generatedFile;
         } catch (Exception e) {
@@ -92,19 +82,32 @@ public abstract class LicenseMojo extends ConfiguredMojo {
     @Override
     protected void modifyMojoConfiguration(Document configuredPom) throws MojoExecutionException {
         try {
-            insertGoal(configuredPom);
+            licenseHeaderFile = readHeaderStringAndwriteHeaderIntoTmpFile();
+            FILES_TO_REMOVE_FINALLY.add(licenseHeaderFile);
+            insertGoalAndSetHeaderPath(configuredPom, cocProfileXpath, mavenLicensePluginGoal,
+                    licenseHeaderFile.getAbsolutePath());
         } catch (XPathExpressionException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
 
-    private void insertGoal(Document configuredPom) throws XPathExpressionException {
+    public static void insertGoalAndSetHeaderPath(Document configuredPom, String profileXpath, String goalToInsert,
+            String headerPathToInsert) throws XPathExpressionException {
         Node node = configuredPom.createElementNS(POM_NS_URI, "goal");
-        node.setTextContent(mavenLicensePluginGoal);
+        node.setTextContent(goalToInsert);
 
-        Tools.insertDomNode(configuredPom, node, cocProfileXpath + "/pom:build/pom:plugins/pom:plugin"
-                + "[pom:groupId='com.mycila.maven-license-plugin' and pom:artifactId='maven-license-plugin']"
-                + "/pom:executions/pom:execution/pom:goals", NS_CONTEXT);
+        String licensePluginXPath = profileXpath + "/pom:build/pom:plugins/pom:plugin"
+                + "[pom:groupId='com.mycila.maven-license-plugin' and pom:artifactId='maven-license-plugin']";
+
+        Tools.insertDomNode(configuredPom, node, licensePluginXPath + "/pom:executions/pom:execution/pom:goals",
+                NS_CONTEXT);
+
+        LOG.trace(String.format("headerPath: \"%s\"", headerPathToInsert));
+        
+        node = configuredPom.createElementNS(POM_NS_URI, "header");
+        node.setTextContent(headerPathToInsert);
+
+        Tools.insertDomNode(configuredPom, node, licensePluginXPath + "/pom:configuration", NS_CONTEXT);
     }
 
 }

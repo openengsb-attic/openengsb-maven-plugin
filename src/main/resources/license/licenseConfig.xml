@@ -24,6 +24,10 @@
     <artifactId>maven-license-plugin</artifactId>
     <version>1.8.0</version>
     <configuration>
+      <!-- header is added dynamically -->
+      <failIfMissing>true</failIfMissing>
+      <aggregate>true</aggregate>
+      <strictCheck>true</strictCheck>
       <excludes>
         <!-- openengs-maven-plugin test resources -->
         <exclude>src/main/resources/license/header.txt</exclude>
