@@ -25,8 +25,7 @@
       <additionalConfig>
         <file>
           <name>.checkstyle</name>
-          <!-- TODO change url to master branch -->
-          <url>https://github.com/openengsb/openengsb-maven-plugin/raw/OPENENGSB-1020/openengsb_eclipse_mojo/src/main/resources/eclipse/eclipseCheckstyle.xml</url>
+          <url>https://github.com/openengsb/openengsb-maven-plugin/raw/master/src/main/resources/eclipse/eclipseCheckstyle.xml</url>
         </file>
       </additionalConfig>
       <additionalBuildcommands>
