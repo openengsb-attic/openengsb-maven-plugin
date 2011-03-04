@@ -29,12 +29,14 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- plugin version -->
     <maven.plugin.checkstyle.version>2.6</maven.plugin.checkstyle.version>
+    <!-- maven-notice-plugin -->
+    <notice.template>https://github.com/openengsb/openengsb/raw/master/etc/notice/NOTICE.template</notice.template>
   </properties>
 
   <parent>
     <groupId>org.openengsb</groupId>
     <artifactId>openengsb-root</artifactId>
-    <version>8</version>
+    <version>9-SNAPSHOT</version>
   </parent>
 
   <groupId>org.openengsb</groupId>
@@ -104,21 +106,28 @@
   </dependencies>
 
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.openengsb</groupId>
-        <artifactId>openengsb-maven-plugin</artifactId>
-        <version>${project.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <configuration>
-          <goalPrefix>openengsb</goalPrefix>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <plugins>
+    <plugin>
+      <groupId>org.openengsb</groupId>
+      <artifactId>openengsb-maven-plugin</artifactId>
+      <version>${project.version}</version>
+    </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-plugin-plugin</artifactId>
+      <configuration>
+        <goalPrefix>openengsb</goalPrefix>
+      </configuration>
+    </plugin>
+    <plugin>
+      <groupId>org.jasig.maven</groupId>
+      <artifactId>maven-notice-plugin</artifactId>
+      <configuration>
+        <noticeTemplate>${notice.template}</noticeTemplate>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
 
 </project>
 
