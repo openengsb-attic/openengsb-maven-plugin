@@ -123,6 +123,7 @@ public class Provision extends AbstractOpenengsbMojo {
         CommandLineBuilder command = new CommandLineBuilder();
         Map<String, String> environment = new HashMap<String, String>();
         environment.put("KARAF_DEBUG", "true");
+        environment.put("KARAF_OPTS", "-Dwicket.configuration=development");
         if (isWindowsSystem()) {
             extractWindowsArchive();
             createExecutableCommand(command, provisionExecutionPathWindows);
