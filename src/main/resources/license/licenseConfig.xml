@@ -38,6 +38,7 @@
         <eclude>src/test/resources/licenseCheck/fail/src/main/java/org/openengsb/licensecheck/App.java</eclude>
         <exclude>src/test/resources/licenseFormat/backup/Without_Header.java</exclude>
         <!-- #################################### -->
+        <exclude>docs/examples/**/*.config</exclude>
         <exclude>etc/eclipse/checkstyle.xml</exclude>
         <exclude>license.txt</exclude>
         <exclude>**/*.vm</exclude>
