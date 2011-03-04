@@ -1,6 +1,10 @@
 openengsb-maven-plugin-1.3.0 2011-03-04
 --------------------------------------------
 
+Most of the things which were done via etc/scripts/* in the OpenEngSB are now possible via the openengsb-maven-plugin now. Many useful default
+configurations (plugin configurations from various poms) have been extracted from the OpenEngSB and are now shipped with the
+openengsb-maven-plugin so that the configuration effort for related projects is reduced. 
+
 ### Highlights
   * prePush mojo
   * checkstyle mojo
