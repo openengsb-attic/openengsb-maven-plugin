@@ -1,3 +1,20 @@
+openengsb-maven-plugin-1.3.1 2011-03-08
+--------------------------------------------
+
+Some small but important fixes
+
+### Highlights
+
+### Details
+** Bug
+    * [OPENENGSB-1073] - openengsb:provision deletes data
+
+** Task
+    * [OPENENGSB-1064] - Release openengsb-maven-plugin-1.3.1
+    * [OPENENGSB-1066] - Add openengsb-maven-plugin to openengsb-root
+    * [OPENENGSB-1067] - errors in the license
+
+
 openengsb-maven-plugin-1.3.0 2011-03-04
 --------------------------------------------
 
