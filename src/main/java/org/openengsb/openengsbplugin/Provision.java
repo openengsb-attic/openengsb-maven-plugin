@@ -31,7 +31,6 @@ import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -189,27 +188,26 @@ public class Provision extends AbstractOpenengsbMojo {
 
     private void extract(ArchiveInputStream is, File targetDir) throws IOException {
         try {
-            if (targetDir.exists()) {
-                FileUtils.forceDelete(targetDir);
-            }
-            targetDir.mkdirs();
-            ArchiveEntry entry = is.getNextEntry();
-            while (entry != null) {
-                String name = entry.getName();
-                name = name.substring(name.indexOf("/") + 1);
-                File file = new File(targetDir, name);
-                if (entry.isDirectory()) {
-                    file.mkdirs();
-                } else {
-                    file.getParentFile().mkdirs();
-                    OutputStream os = new FileOutputStream(file);
-                    try {
-                        IOUtils.copy(is, os);
-                    } finally {
-                        IOUtils.closeQuietly(os);
+            if (!targetDir.exists()) {
+                targetDir.mkdirs();
+                ArchiveEntry entry = is.getNextEntry();
+                while (entry != null) {
+                    String name = entry.getName();
+                    name = name.substring(name.indexOf("/") + 1);
+                    File file = new File(targetDir, name);
+                    if (entry.isDirectory()) {
+                        file.mkdirs();
+                    } else {
+                        file.getParentFile().mkdirs();
+                        OutputStream os = new FileOutputStream(file);
+                        try {
+                            IOUtils.copy(is, os);
+                        } finally {
+                            IOUtils.closeQuietly(os);
+                        }
                     }
+                    entry = is.getNextEntry();
                 }
-                entry = is.getNextEntry();
             }
         } finally {
             is.close();
