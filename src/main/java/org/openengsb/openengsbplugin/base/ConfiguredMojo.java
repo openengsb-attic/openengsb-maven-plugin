@@ -72,7 +72,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     private PomRestoreMode pomRestoreMode = PomRestoreMode.RESTORE_BACKUP;
     private boolean pomCleanedSuccessfully = false;
     
-    private Node licenseHeaderComment = null;
+    protected Node licenseHeaderComment = null;
 
     /**
      * If set to "true" prints the temporary pom to the console.
@@ -87,8 +87,8 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         cocProfile = UUID.randomUUID().toString();
         cocProfileXpath = String.format("/pom:project/pom:profiles/pom:profile[pom:id[text()='%s']]",
                 cocProfile);
-        configureTmpPom(cocProfile);
         configureCoCMojo();
+        configureTmpPom(cocProfile);
     }
     
     /**
@@ -204,9 +204,9 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     protected void modifyMojoConfiguration(Document configuredPom) throws MojoExecutionException {
     }
     
-    private String addHeader(String pomContent) throws IOException {
+    protected String addHeader(String content) throws IOException {
         String result = "";
-        StringReader stringReader = new StringReader(pomContent);
+        StringReader stringReader = new StringReader(content);
         BufferedReader br = new BufferedReader(stringReader);
 
         String line;
@@ -238,7 +238,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         return doc;
     }
     
-    private void tryExtractLicenseHeader(Document doc) {
+    protected void tryExtractLicenseHeader(Document doc) {
         Node firstNode = doc.getChildNodes().item(0);
         if (firstNode.getNodeType() == Node.COMMENT_NODE) {
             LOG.trace(String.format("found license header with content:\n%s", firstNode.getNodeValue()));
