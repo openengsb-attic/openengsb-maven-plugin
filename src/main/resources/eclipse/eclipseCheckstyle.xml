@@ -19,10 +19,9 @@
 -->
 
 <fileset-config file-format-version="1.2.0" simple-config="true" sync-formatter="false">
-  <local-check-config name="OpenEngSB Checkstyle" location="https://github.com/openengsb/openengsb-maven-plugin/raw/master/src/main/resources/checkstyle/checkstyle.xml" type="remote" description="">
-    <additional-data name="cache-file" value="true"/>
-    <additional-data name="cache-props-file-location" value="null_1299088110150_cache.properties"/>
-    <additional-data name="cache-file-location" value="null_1299088110150_cache.xml"/>
+  <!-- the location is set dynamically -->
+  <local-check-config name="OpenEngSB Checkstyle" location="THIS IST SET DYNAMICALLY" type="external" description="">
+    <additional-data name="protect-config-file" value="false"/>
   </local-check-config>
   <fileset name="all" enabled="true" check-config-name="OpenEngSB Checkstyle" local="true">
     <file-match-pattern match-pattern="." include-pattern="true"/>

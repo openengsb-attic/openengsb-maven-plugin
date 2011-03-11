@@ -124,17 +124,25 @@ public abstract class Tools {
     }
 
     /**
-     * Parses an XML document from {@code str}
+     * Parses an XML document from {@code str} (defaults to namespaceaware = true)
      * @throws ParserConfigurationException 
      * @throws IOException 
      * @throws SAXException 
      */
     public static Document parseXMLFromString(String str) throws ParserConfigurationException, SAXException,
             IOException {
+        return parseXMLFromString(str, true);
+    }
+    
+    /**
+     * Parses an XML document from {@code str}
+     */
+    public static Document parseXMLFromString(String str, boolean namespaceaware) throws ParserConfigurationException,
+            SAXException, IOException {
         StringReader sr = null;
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            dbf.setNamespaceAware(true);
+            dbf.setNamespaceAware(namespaceaware);
             DocumentBuilder db = dbf.newDocumentBuilder();
             sr = new StringReader(str);
             return db.parse(new InputSource(sr));
