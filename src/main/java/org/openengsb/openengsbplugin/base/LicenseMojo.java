@@ -18,12 +18,14 @@
 package org.openengsb.openengsbplugin.base;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -33,7 +35,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public abstract class LicenseMojo extends ConfiguredMojo {
-    
+
     private static final Logger LOG = Logger.getLogger(LicenseMojo.class);
 
     // #################################
@@ -47,6 +49,14 @@ public abstract class LicenseMojo extends ConfiguredMojo {
     private static final String WRAPPED_GOAL = "validate";
     private static final String HEADER_PATH = "license/header.txt";
     private File licenseHeaderFile;
+
+    /**
+     * Defines path to a file where each line represents a pattern which to exclude from
+     * license check or license format (additionally to the default excludes).
+     * 
+     * @parameter expression="${additionalExcludes}"
+     */
+    private String additionalExcludes;
 
     public LicenseMojo() {
         configs.add("license/licenseConfig.xml");
@@ -87,7 +97,8 @@ public abstract class LicenseMojo extends ConfiguredMojo {
             FILES_TO_REMOVE_FINALLY.add(licenseHeaderFile);
             insertGoalAndSetHeaderPath(configuredPom, cocProfileXpath, mavenLicensePluginGoal,
                     licenseHeaderFile.getAbsolutePath());
-        } catch (XPathExpressionException e) {
+            addExcludes(configuredPom, cocProfileXpath, additionalExcludes);
+        } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
@@ -104,11 +115,38 @@ public abstract class LicenseMojo extends ConfiguredMojo {
                 NS_CONTEXT);
 
         LOG.trace(String.format("headerPath: \"%s\"", headerPathToInsert));
-        
+
         node = configuredPom.createElementNS(POM_NS_URI, "header");
         node.setTextContent(headerPathToInsert);
 
         Tools.insertDomNode(configuredPom, node, licensePluginXPath + "/pom:configuration", NS_CONTEXT);
+    }
+
+    public static void addExcludes(Document configuredPom, String profileXpath, String excludesFilePath)
+        throws IOException, XPathExpressionException {
+        if (excludesFilePath == null) {
+            return;
+        }
+        File excludesFile = new File(excludesFilePath);
+        if (!excludesFile.exists()) {
+            return;
+        }
+
+        String insertPath = profileXpath + "/pom:build/pom:plugins/pom:plugin"
+                + "[pom:groupId='com.mycila.maven-license-plugin' and pom:artifactId='maven-license-plugin']"
+                + "/pom:configuration/pom:excludes";
+
+        @SuppressWarnings("unchecked")
+        List<String> lines = FileUtils.readLines(excludesFile);
+        for (String line : lines) {
+            if (line == null || line.trim().equals("")) {
+                continue;
+            }
+            LOG.trace(String.format("adding exclude: %s", line));
+            Node node = configuredPom.createElementNS(POM_NS_URI, "exclude");
+            node.setTextContent(line.trim());
+            Tools.insertDomNode(configuredPom, node, insertPath, NS_CONTEXT);
+        }
     }
 
 }

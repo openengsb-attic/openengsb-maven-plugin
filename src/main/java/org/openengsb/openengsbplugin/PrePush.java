@@ -21,8 +21,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.xpath.XPathExpressionException;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.openengsb.openengsbplugin.base.ConfiguredMojo;
 import org.openengsb.openengsbplugin.base.LicenseMojo;
@@ -41,6 +39,14 @@ import org.w3c.dom.Document;
  * 
  */
 public class PrePush extends ConfiguredMojo {
+    
+    /**
+     * Defines path to a file where each line represents a pattern which to exclude from
+     * license check or license format (additionally to the default excludes).
+     * 
+     * @parameter expression="${additionalExcludes}"
+     */
+    private String additionalExcludes;
     
     public PrePush() {
         configs.add("license/licenseConfig.xml");
@@ -72,11 +78,12 @@ public class PrePush extends ConfiguredMojo {
             FILES_TO_REMOVE_FINALLY.add(licenseHeaderFile);
             LicenseMojo.insertGoalAndSetHeaderPath(configuredPom, cocProfileXpath, "check",
                     licenseHeaderFile.getAbsolutePath());
+            LicenseMojo.addExcludes(configuredPom, cocProfileXpath, additionalExcludes);
             
             File checkstyleCheckerConfigTmp = Checkstyle.createCheckstyleCheckerConfiguration();
             FILES_TO_REMOVE_FINALLY.add(checkstyleCheckerConfigTmp);
             Checkstyle.insertCheckstyleConfigLocation(configuredPom, cocProfileXpath, checkstyleCheckerConfigTmp);
-        } catch (XPathExpressionException e) {
+        } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
