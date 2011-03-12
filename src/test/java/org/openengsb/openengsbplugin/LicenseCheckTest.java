@@ -48,6 +48,13 @@ public class LicenseCheckTest extends MojoPreparation {
         assertEquals(0, result);
     }
 
+    public void checkCheckHeadersWithAdditionalIgnores_shouldPass() throws Exception {
+        int result = Tools.executeProcess(
+                Arrays.asList(new String[] { mvnCommand, "-e", invocation, "-DadditionalExcludes=excludes.txt" }),
+                new File("src/test/resources/licenseCheck/fail"));
+        assertEquals(0, result);
+    }
+
     @Test
     public void writeHeaderTest() throws Exception {
         File generatedFile = null;
