@@ -48,6 +48,7 @@ public class LicenseCheckTest extends MojoPreparation {
         assertEquals(0, result);
     }
 
+    @Test
     public void checkCheckHeadersWithAdditionalIgnores_shouldPass() throws Exception {
         int result = Tools.executeProcess(
                 Arrays.asList(new String[] { mvnCommand, "-e", invocation, "-DadditionalExcludes=excludes.txt" }),

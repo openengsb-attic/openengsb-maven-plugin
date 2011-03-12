@@ -139,6 +139,10 @@ public abstract class LicenseMojo extends ConfiguredMojo {
         @SuppressWarnings("unchecked")
         List<String> lines = FileUtils.readLines(excludesFile);
         for (String line : lines) {
+            if (line == null || line.trim().equals("")) {
+                continue;
+            }
+            LOG.trace(String.format("adding exclude: %s", line));
             Node node = configuredPom.createElementNS(POM_NS_URI, "exclude");
             node.setTextContent(line.trim());
             Tools.insertDomNode(configuredPom, node, insertPath, NS_CONTEXT);
