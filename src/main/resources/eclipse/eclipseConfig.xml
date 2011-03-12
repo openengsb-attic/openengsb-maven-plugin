@@ -26,7 +26,7 @@
       <additionalConfig>
         <file>
           <name>.checkstyle</name>
-          <url>https://github.com/openengsb/openengsb-maven-plugin/raw/master/src/main/resources/eclipse/eclipseCheckstyle.xml</url>
+          <!-- the location is set dynamically -->
         </file>
       </additionalConfig>
       <additionalBuildcommands>
