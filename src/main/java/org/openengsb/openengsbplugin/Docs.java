@@ -3,6 +3,7 @@ package org.openengsb.openengsbplugin;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.openengsb.openengsbplugin.base.ConfiguredMojo;
@@ -38,8 +39,12 @@ public class Docs extends ConfiguredMojo {
         List<String> activeProfiles = new ArrayList<String>();
         activeProfiles.add(cocProfile);
         
+        Properties userProperties = new Properties();
+        userProperties.put("maven.test.skip", "true");
+        
         MavenExecutor docsMojoExecutor = getNewMavenExecutor(this);
         docsMojoExecutor.addGoals(goals);
+        docsMojoExecutor.addUserProperties(userProperties);
         docsMojoExecutor.setRecursive(true);
         docsMojoExecutor.addActivatedProfiles(activeProfiles);
         
