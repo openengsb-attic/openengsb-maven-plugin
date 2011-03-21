@@ -72,19 +72,21 @@ public class PrePush extends ConfiguredMojo {
     }
     
     @Override
-    protected void modifyMojoConfiguration(Document configuredPom) throws MojoExecutionException {
-        try {
-            File licenseHeaderFile = LicenseMojo.readHeaderStringAndwriteHeaderIntoTmpFile();
-            FILES_TO_REMOVE_FINALLY.add(licenseHeaderFile);
-            LicenseMojo.insertGoalAndSetHeaderPath(configuredPom, cocProfileXpath, "check",
-                    licenseHeaderFile.getAbsolutePath());
-            LicenseMojo.addExcludes(configuredPom, cocProfileXpath, additionalExcludes);
-            
-            File checkstyleCheckerConfigTmp = Checkstyle.createCheckstyleCheckerConfiguration();
-            FILES_TO_REMOVE_FINALLY.add(checkstyleCheckerConfigTmp);
-            Checkstyle.insertCheckstyleConfigLocation(configuredPom, cocProfileXpath, checkstyleCheckerConfigTmp);
-        } catch (Exception e) {
-            throw new MojoExecutionException(e.getMessage(), e);
+    protected void modifyMojoConfiguration(String pomPath, Document configuredPom) throws MojoExecutionException {
+        if (pomPath.equals("pom.xml")) {
+            try {
+                File licenseHeaderFile = LicenseMojo.readHeaderStringAndwriteHeaderIntoTmpFile();
+                FILES_TO_REMOVE_FINALLY.add(licenseHeaderFile);
+                LicenseMojo.insertGoalAndSetHeaderPath(configuredPom, cocProfileXpath, "check",
+                        licenseHeaderFile.getAbsolutePath());
+                LicenseMojo.addExcludes(configuredPom, cocProfileXpath, additionalExcludes);
+
+                File checkstyleCheckerConfigTmp = Checkstyle.createCheckstyleCheckerConfiguration();
+                FILES_TO_REMOVE_FINALLY.add(checkstyleCheckerConfigTmp);
+                Checkstyle.insertCheckstyleConfigLocation(configuredPom, cocProfileXpath, checkstyleCheckerConfigTmp);
+            } catch (Exception e) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
         }
     }
 

@@ -98,13 +98,15 @@ public class Checkstyle extends ConfiguredMojo {
     }
 
     @Override
-    protected final void modifyMojoConfiguration(Document configuredPom) throws MojoExecutionException {
-        try {
-            checkstyleCheckerConfigTmp = createCheckstyleCheckerConfiguration();
-            FILES_TO_REMOVE_FINALLY.add(checkstyleCheckerConfigTmp);
-            insertCheckstyleConfigLocation(configuredPom, cocProfileXpath, checkstyleCheckerConfigTmp);
-        } catch (XPathExpressionException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
+    protected final void modifyMojoConfiguration(String pomPath, Document configuredPom) throws MojoExecutionException {
+        if (pomPath.equals("pom.xml")) {
+            try {
+                checkstyleCheckerConfigTmp = createCheckstyleCheckerConfiguration();
+                FILES_TO_REMOVE_FINALLY.add(checkstyleCheckerConfigTmp);
+                insertCheckstyleConfigLocation(configuredPom, cocProfileXpath, checkstyleCheckerConfigTmp);
+            } catch (XPathExpressionException e) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
         }
     }
     
