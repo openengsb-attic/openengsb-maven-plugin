@@ -43,7 +43,7 @@ import org.openengsb.openengsbplugin.tools.MavenExecutor;
 public class Assemble extends ConfiguredMojo {
 
     public Assemble() {
-        configs.add("assemble/assembleConfig.xml");
+        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "assemble/assembleConfig.xml" }));
     }
 
     @Override

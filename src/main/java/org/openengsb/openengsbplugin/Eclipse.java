@@ -58,7 +58,7 @@ public class Eclipse extends ConfiguredMojo {
     private File checkstyleCheckerConfig;
 
     public Eclipse() {
-        configs.add("eclipse/eclipseConfig.xml");
+        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "eclipse/eclipseConfig.xml" }));
     }
 
     @Override

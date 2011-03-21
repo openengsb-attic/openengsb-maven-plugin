@@ -51,16 +51,6 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     private static final Logger LOG = Logger.getLogger(ConfiguredMojo.class);
     
     /**
-     * If you wan't to merge some configuration into some other pom's except the
-     * root pom (pom in the dir where invoke the plugin), please put entries of
-     * the form
-     * {@code (<relative path to pom>, <list of configurations from the resources>)}
-     * into {@link ConfiguredMojo#pomConfigs}. The content of the
-     * configuration files listed will get merged into the pom at the specified path.
-     */
-    protected HashMap<String, List<String>> pomConfigs = new HashMap<String, List<String>>();
-    
-    /**
      * Stores references to poms corresponding to keys in {@link ConfiguredMojo#pomConfigs}
      */
     private HashMap<String, File> poms = new HashMap<String, File>();
@@ -77,11 +67,12 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     // #################################
 
     /**
-     * Defines which configs (from {@code resources/xxx}) to merge into the pom of the current dir (where
-     * the mojo is invoked). For examples please see constructor of every direct subclass of {@link ConfiguredMojo} (
-     * e.g. {@link LicenseMojo#LicenseMojo()}.
+     * Defines which configs (from {@code resources/xxx}) to merge into which pom
+     * where key = path to pom, relative to current dir (where the mojo is invoked).
+     * For examples please see constructor of every direct subclass of
+     * {@link ConfiguredMojo} ( e.g. {@link LicenseMojo#LicenseMojo()}.
      */
-    protected ArrayList<String> configs = new ArrayList<String>();
+    protected HashMap<String, List<String>> pomConfigs = new HashMap<String, List<String>>();
 
     // #################################
 
@@ -118,9 +109,6 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         cocProfileXpath = String.format("/pom:project/pom:profiles/pom:profile[pom:id[text()='%s']]",
                 cocProfile);
         configureCoCMojo();
-        
-        pomConfigs.put("pom.xml", configs);
-        poms.put("pom.xml", getSession().getRequest().getPom());
         
         checkForPoms();
         for (String pomPath : poms.keySet()) {

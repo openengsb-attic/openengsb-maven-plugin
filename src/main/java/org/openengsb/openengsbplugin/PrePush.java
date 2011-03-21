@@ -19,6 +19,7 @@ package org.openengsb.openengsbplugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -49,9 +50,10 @@ public class PrePush extends ConfiguredMojo {
     private String additionalExcludes;
     
     public PrePush() {
-        configs.add("license/licenseConfig.xml");
-        configs.add("checkstyle/checkstyleConfig.xml");
-        configs.add("integrationTest/integrationTestConfig.xml");
+        pomConfigs.put(
+                "pom.xml",
+                Arrays.asList(new String[] { "license/licenseConfig.xml", "checkstyle/checkstyleConfig.xml",
+                    "integrationTest/integrationTestConfig.xml" }));
     }
 
     @Override

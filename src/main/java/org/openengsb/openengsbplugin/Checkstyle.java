@@ -58,7 +58,7 @@ public class Checkstyle extends ConfiguredMojo {
     private boolean skipClean;
 
     public Checkstyle() {
-        configs.add("checkstyle/checkstyleConfig.xml");
+        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "checkstyle/checkstyleConfig.xml" }));
     }
 
     @Override

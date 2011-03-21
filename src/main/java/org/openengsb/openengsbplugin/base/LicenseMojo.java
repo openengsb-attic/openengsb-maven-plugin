@@ -59,7 +59,7 @@ public abstract class LicenseMojo extends ConfiguredMojo {
     private String additionalExcludes;
 
     public LicenseMojo() {
-        configs.add("license/licenseConfig.xml");
+        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "license/licenseConfig.xml" }));
     }
 
     @Override
