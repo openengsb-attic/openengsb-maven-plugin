@@ -318,7 +318,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         Element pluginsElement = profileDoc.createElementNS(POM_NS_URI, "plugins");
         buildElement.appendChild(pluginsElement);
         Element modulesElement = profileDoc.createElementNS(POM_NS_URI, "modules");
-        buildElement.appendChild(modulesElement);
+        profileElement.appendChild(modulesElement);
         Element resourcesElement = profileDoc.createElementNS(POM_NS_URI, "resources");
         buildElement.appendChild(resourcesElement);
 
@@ -332,7 +332,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
                     .getResourceAsStream(configFilePath)));
             collectFromXPathAndImportConfigurations(PLUGINS_XPATH, configDocument, profileDoc, buildElement,
                     pluginsElement);
-            collectFromXPathAndImportConfigurations(MODULES_XPATH, configDocument, profileDoc, buildElement,
+            collectFromXPathAndImportConfigurations(MODULES_XPATH, configDocument, profileDoc, profileElement,
                     modulesElement);
             collectFromXPathAndImportConfigurations(RESOURCES_XPATH, configDocument, profileDoc, buildElement,
                     resourcesElement);
