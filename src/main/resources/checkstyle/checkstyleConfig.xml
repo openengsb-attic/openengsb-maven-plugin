@@ -19,25 +19,27 @@
 -->
 
 <c:config xmlns="http://maven.apache.org/POM/4.0.0" xmlns:c="http://www.openengsb.org/openengsb-maven-plugin/CoCProfile">
-  <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-checkstyle-plugin</artifactId>
-    <version>${maven.plugin.checkstyle.version}</version>
-    <configuration>
-      <!-- the config location is added dynamically by the mojo -->
-      <consoleOutput>true</consoleOutput>
-      <enableRulesSummary>true</enableRulesSummary>
-      <failsOnError>true</failsOnError>
-      <includeTestSourceDirectory>true</includeTestSourceDirectory>
-    </configuration>
-    <executions>
-      <execution>
-        <id>check</id>
-        <phase>verify</phase>
-        <goals>
-          <goal>checkstyle</goal>
-        </goals>
-      </execution>
-    </executions>
-  </plugin>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-checkstyle-plugin</artifactId>
+      <version>${maven.plugin.checkstyle.version}</version>
+      <configuration>
+        <!-- the config location is added dynamically by the mojo -->
+        <consoleOutput>true</consoleOutput>
+        <enableRulesSummary>true</enableRulesSummary>
+        <failsOnError>true</failsOnError>
+        <includeTestSourceDirectory>true</includeTestSourceDirectory>
+      </configuration>
+      <executions>
+        <execution>
+          <id>check</id>
+          <phase>verify</phase>
+          <goals>
+            <goal>checkstyle</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
 </c:config>
