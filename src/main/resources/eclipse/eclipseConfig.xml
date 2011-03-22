@@ -19,24 +19,26 @@
 -->
 
 <c:config xmlns="http://maven.apache.org/POM/4.0.0" xmlns:c="http://www.openengsb.org/openengsb-maven-plugin/CoCProfile">
-  <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-eclipse-plugin</artifactId>
-    <configuration>
-      <additionalConfig>
-        <file>
-          <name>.checkstyle</name>
-          <!-- the location is set dynamically -->
-        </file>
-      </additionalConfig>
-      <additionalBuildcommands>
-        <buildCommand>
-          <name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
-        </buildCommand>
-      </additionalBuildcommands>
-      <additionalProjectnatures>
-        <projectnature>net.sf.eclipsecs.core.CheckstyleNature</projectnature>
-      </additionalProjectnatures>
-    </configuration>
-  </plugin>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-eclipse-plugin</artifactId>
+      <configuration>
+        <additionalConfig>
+          <file>
+            <name>.checkstyle</name>
+            <!-- the location is set dynamically -->
+          </file>
+        </additionalConfig>
+        <additionalBuildcommands>
+          <buildCommand>
+            <name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
+          </buildCommand>
+        </additionalBuildcommands>
+        <additionalProjectnatures>
+          <projectnature>net.sf.eclipsecs.core.CheckstyleNature</projectnature>
+        </additionalProjectnatures>
+      </configuration>
+    </plugin>
+  </plugins>
 </c:config>

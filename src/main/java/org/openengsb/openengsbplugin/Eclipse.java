@@ -58,7 +58,7 @@ public class Eclipse extends ConfiguredMojo {
     private File checkstyleCheckerConfig;
 
     public Eclipse() {
-        configs.add("eclipse/eclipseConfig.xml");
+        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "eclipse/eclipseConfig.xml" }));
     }
 
     @Override
@@ -111,14 +111,16 @@ public class Eclipse extends ConfiguredMojo {
     }
 
     @Override
-    protected void modifyMojoConfiguration(Document configuredPom) throws MojoExecutionException {
-        try {
-            File checkstyleEclipseConfig = writeCheckstyleEclipseConfigAndSetCheckerConfigPath();
-            FILES_TO_REMOVE_FINALLY.add(checkstyleEclipseConfig);
-            setCheckstyleEclipseConfigLocation(configuredPom, cocProfileXpath,
-                    checkstyleEclipseConfig.getAbsolutePath());
-        } catch (XPathExpressionException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
+    protected void modifyMojoConfiguration(String pomPath, Document configuredPom) throws MojoExecutionException {
+        if (pomPath.equals("pom.xml")) {
+            try {
+                File checkstyleEclipseConfig = writeCheckstyleEclipseConfigAndSetCheckerConfigPath();
+                FILES_TO_REMOVE_FINALLY.add(checkstyleEclipseConfig);
+                setCheckstyleEclipseConfigLocation(configuredPom, cocProfileXpath,
+                        checkstyleEclipseConfig.getAbsolutePath());
+            } catch (XPathExpressionException e) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
         }
     }
 

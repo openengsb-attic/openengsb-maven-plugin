@@ -18,6 +18,7 @@
 package org.openengsb.openengsbplugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -40,7 +41,7 @@ import org.openengsb.openengsbplugin.tools.MavenExecutor;
 public class ReleaseNightly extends ConfiguredMojo {
 
     public ReleaseNightly() {
-        configs.add("release/nightlyConfig.xml");
+        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "release/nightlyConfig.xml" }));
     }
 
     @Override

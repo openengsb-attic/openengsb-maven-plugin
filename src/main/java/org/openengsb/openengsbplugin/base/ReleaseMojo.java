@@ -18,6 +18,7 @@
 package org.openengsb.openengsbplugin.base;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -40,7 +41,7 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
     protected String connectionUrl;
 
     public ReleaseMojo() {
-        configs.add("release/releaseCommonConfig.xml");
+        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "release/releaseCommonConfig.xml" }));
     }
 
     protected abstract String getReleaseProfile();

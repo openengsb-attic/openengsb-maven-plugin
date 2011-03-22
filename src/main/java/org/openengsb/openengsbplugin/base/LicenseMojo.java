@@ -59,7 +59,7 @@ public abstract class LicenseMojo extends ConfiguredMojo {
     private String additionalExcludes;
 
     public LicenseMojo() {
-        configs.add("license/licenseConfig.xml");
+        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "license/licenseConfig.xml" }));
     }
 
     @Override
@@ -91,15 +91,17 @@ public abstract class LicenseMojo extends ConfiguredMojo {
     }
 
     @Override
-    protected void modifyMojoConfiguration(Document configuredPom) throws MojoExecutionException {
-        try {
-            licenseHeaderFile = readHeaderStringAndwriteHeaderIntoTmpFile();
-            FILES_TO_REMOVE_FINALLY.add(licenseHeaderFile);
-            insertGoalAndSetHeaderPath(configuredPom, cocProfileXpath, mavenLicensePluginGoal,
-                    licenseHeaderFile.getAbsolutePath());
-            addExcludes(configuredPom, cocProfileXpath, additionalExcludes);
-        } catch (Exception e) {
-            throw new MojoExecutionException(e.getMessage(), e);
+    protected void modifyMojoConfiguration(String pomPath, Document configuredPom) throws MojoExecutionException {
+        if (pomPath.equals("pom.xml")) {
+            try {
+                licenseHeaderFile = readHeaderStringAndwriteHeaderIntoTmpFile();
+                FILES_TO_REMOVE_FINALLY.add(licenseHeaderFile);
+                insertGoalAndSetHeaderPath(configuredPom, cocProfileXpath, mavenLicensePluginGoal,
+                        licenseHeaderFile.getAbsolutePath());
+                addExcludes(configuredPom, cocProfileXpath, additionalExcludes);
+            } catch (Exception e) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
         }
     }
 
