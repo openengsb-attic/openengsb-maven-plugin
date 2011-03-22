@@ -1,3 +1,22 @@
+openengsb-maven-plugin-1.3.2 2011-03-22
+--------------------------------------------
+
+some minor fixes
+
+### Highlights
+
+### Details
+** Bug
+    * [OPENENGSB-1109] - eclipse checkstyle-plugin gets really slow when offline
+    * [OPENENGSB-1119] - Eclipse Checkstyle configuration has a bug
+
+** Improvement
+    * [OPENENGSB-1121] - change exception handling in checkstyle
+
+** Task
+    * [OPENENGSB-1149] - release openengsb-maven-plugin-1.3.2
+
+
 openengsb-maven-plugin-1.3.1 2011-03-08
 --------------------------------------------
 
