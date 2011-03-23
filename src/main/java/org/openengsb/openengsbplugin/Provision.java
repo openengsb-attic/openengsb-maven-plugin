@@ -28,9 +28,7 @@ import java.util.Map;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -120,13 +118,12 @@ public class Provision extends AbstractOpenengsbMojo {
         Map<String, String> environment = new HashMap<String, String>();
         environment.put("KARAF_DEBUG", "true");
         environment.put("KARAF_OPTS", "-Dwicket.configuration=development");
+        extractArchive();
         if (isWindowsSystem()) {
-            extractWindowsArchive();
             createExecutableCommand(command, provisionExecutionPathWindows);
             makeAdditionalRequiredFilesExecutable(additionalRequiredExecutionPathWindows);
             environment.put("JAVA_OPTS", "-Djline.terminal=jline.UnsupportedTerminal");
         } else {
-            extractUnixArchive();
             createExecutableCommand(command, provisionExecutionPathUnix);
             makeAdditionalRequiredFilesExecutable(additionalRequiredExecutionPathUnix);
         }
@@ -161,20 +158,7 @@ public class Provision extends AbstractOpenengsbMojo {
         }
     }
 
-    private void extractUnixArchive() throws MojoFailureException {
-        try {
-            extract(new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(
-                    provisionArchivePathUnix))), new File(RUNNER));
-        } catch (FileNotFoundException e) {
-            throw new MojoFailureException(e, "Provision file for UNIX could not be found (" + provisionArchivePathUnix
-                    + ")", e.getMessage());
-        } catch (IOException e) {
-            throw new MojoFailureException(e, "Provision file for UNIX could not be found (" + provisionArchivePathUnix
-                    + ")", e.getMessage());
-        }
-    }
-
-    private void extractWindowsArchive() throws MojoFailureException {
+    private void extractArchive() throws MojoFailureException {
         try {
             extract(new ZipArchiveInputStream(new FileInputStream(provisionArchivePathWindows)), new File(RUNNER));
         } catch (FileNotFoundException e) {
