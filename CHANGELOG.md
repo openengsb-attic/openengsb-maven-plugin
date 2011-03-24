@@ -1,3 +1,19 @@
+openengsb-maven-plugin-1.3.3 2011-03-24
+--------------------------------------------
+
+Fix to work with the merged windows/linux version of the OpenEngSB
+
+### Highlights
+
+### Details
+Release Notes - OpenEngSB - Version openengsb-maven-plugin-1.3.3
+
+** Bug
+    * [OPENENGSB-1161] - openengsb:provision broken (on unix)
+
+** Task
+    * [OPENENGSB-1152] - Release openengsb-maven-plugin-1.3.3
+
 openengsb-maven-plugin-1.3.2 2011-03-22
 --------------------------------------------
 
