@@ -43,13 +43,13 @@ public class GenClientRoot extends MavenExecutorMojo {
     // INPUT
     private String clientProjectGroupId;
     private String artifactId;
-    private String clientProjectName;
     private String clientProjectVersion;
     private String clientProjectDescription;
     private String clientProjectUrl;
     private String openengsbVersion;
     private String openengsbMavenPluginVersion;
     private String pluginAssemblyVersion;
+    private String name;
 
 
 
@@ -58,10 +58,9 @@ public class GenClientRoot extends MavenExecutorMojo {
     private static final String ARCHETYPE_ARTIFACTID = "org.openengsb.tooling.archetypes.clientproject.root";
 
     private static final String PROJECT_GROUPID = "org.openengsb.client-project";
-    private static final String PROJECT_ARTIFACTID = "openengsb-client-project-parent";
+    private static final String PROJECT_ARTIFACTID = "openengsb-client-project";
 
-    private static final String PROJECT_NAME = "Client-Poject ";
-    private static final String PROJECT_NAME_SUFFIX = " :: Parent";
+    private static final String PROJECT_NAME = "Client-Poject";
     private static final String PROJECT_VERSION = "1.0.0-SNAPSHOT";
     private static final String PROJECT_DESCRIPTION = "This is a client project for the OpenEngSB";
     private static final String PROJECT_URL = "http://www.openenbsb.org";
@@ -102,7 +101,7 @@ public class GenClientRoot extends MavenExecutorMojo {
         clientProjectGroupId = Tools.readValueFromStdin(sc, "Project Group Id", PROJECT_GROUPID);
         artifactId = Tools.readValueFromStdin(sc, "Project Artifact Id", PROJECT_ARTIFACTID);
 
-        clientProjectName = Tools.readValueFromStdin(sc, "Project Name", PROJECT_NAME + PROJECT_NAME_SUFFIX);
+        name = Tools.readValueFromStdin(sc, "Project Name", PROJECT_NAME);
         clientProjectVersion = Tools.readValueFromStdin(sc, "Project Version", PROJECT_VERSION);
         clientProjectDescription = Tools.readValueFromStdin(sc, "Project Description", PROJECT_DESCRIPTION);
         clientProjectUrl = Tools.readValueFromStdin(sc, "Project Url", PROJECT_URL);
@@ -110,7 +109,7 @@ public class GenClientRoot extends MavenExecutorMojo {
         openengsbVersion = Tools.readValueFromStdin(sc, "OpenEngSB version", OPENENGSB_VERSION);
         openengsbMavenPluginVersion = Tools
             .readValueFromStdin(sc, "OpenEngSB maven plugin Version", OPENENGSB_MAVEN_VERSION);
-        pluginAssemblyVersion = Tools.readValueFromStdin(sc, "Project Artifact Id", PLUGIN_ASSEMBLY_VERSION);
+        pluginAssemblyVersion = Tools.readValueFromStdin(sc, "Plugin Assembly version", PLUGIN_ASSEMBLY_VERSION);
 
     }
 
@@ -124,7 +123,7 @@ public class GenClientRoot extends MavenExecutorMojo {
         userProperties.put("artifactId", artifactId);
         userProperties.put("groupId", clientProjectGroupId);
         userProperties.put("version", clientProjectVersion);
-        userProperties.put("name", clientProjectName);
+        userProperties.put("name", name);
         userProperties.put("clientProjectDescription", clientProjectDescription);
         userProperties.put("clientProjectUrl", clientProjectUrl);
         userProperties.put("openengsbVersion", openengsbVersion);
