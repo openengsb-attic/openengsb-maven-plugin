@@ -55,7 +55,7 @@ public class GenClientCore extends MavenExecutorMojo {
     private static final String PROJECT_GROUPID = "org.openengsb.client-project";
     private static final String PROJECT_ARTIFACTID = "openengsb-client-project-parent";
 
-    private static final String PROJECT_NAME = "Client-Poject ";
+    private static final String PROJECT_NAME = "Client-Poject";
     private static final String PROJECT_VERSION = "1.0.0-SNAPSHOT";
 
     // DYNAMIC DEFAULTS
