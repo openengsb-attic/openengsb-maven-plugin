@@ -28,15 +28,15 @@ import org.openengsb.openengsbplugin.tools.MavenExecutor;
 import org.openengsb.openengsbplugin.tools.Tools;
 
 /**
- * guides through the creation of a new client project for the OpenEngSB via the
- * client creation archetype
+ * guides through the creation of a connector for the OpenEngSB via the
+ * connector archetype
  *
- * @goal genClientProjectRoot
+ * @goal genAssembly
  * @inheritedByDefault false
- * @requiresProject false
- * @aggregator false
+ * @requiresProject true
+ * @aggregator true
  */
-public class GenClientRoot extends MavenExecutorMojo {
+public class GenClientAssembly extends MavenExecutorMojo {
 
     private boolean archetypeCatalogLocalOnly = false;
 
@@ -47,37 +47,42 @@ public class GenClientRoot extends MavenExecutorMojo {
     private String clientProjectVersion;
     private String clientProjectDescription;
     private String clientProjectUrl;
-    private String openengsbVersion;
-    private String openengsbMavenPluginVersion;
-    private String pluginAssemblyVersion;
-
+    private String scmConnection;
+    private String scmDeveloperConnection;
+    private String scmUrl;
+    private String version;
+    private String name;
+    private String url;
 
 
     // CONSTANTS
     private static final String ARCHETYPE_GROUPID = "org.openengsb.tooling.archetypes.clientproject";
-    private static final String ARCHETYPE_ARTIFACTID = "org.openengsb.tooling.archetypes.clientproject.root";
+    private static final String ARCHETYPE_ARTIFACTID = "org.openengsb.tooling.archetypes.clientproject.assembly";
 
     private static final String PROJECT_GROUPID = "org.openengsb.client-project";
     private static final String PROJECT_ARTIFACTID = "openengsb-client-project-parent";
 
-    private static final String PROJECT_NAME = "Client-Poject ";
-    private static final String PROJECT_NAME_SUFFIX = " :: Parent";
+    private static final String PROJECT_NAME = "Client-Poject";
     private static final String PROJECT_VERSION = "1.0.0-SNAPSHOT";
-    private static final String PROJECT_DESCRIPTION = "This is a client project for the OpenEngSB";
+    private static final String PROJECT_DESCRIPTION  = "Creates binary distribution and prepares configuration files ";
     private static final String PROJECT_URL = "http://www.openenbsb.org";
 
-    private static final String OPENENGSB_MAVEN_VERSION = "1.4.0-SNAPSHOT";
-    private static final String OPENENGSB_VERSION = "1.2.0-SNAPSHOT";
-    private static final String PLUGIN_ASSEMBLY_VERSION = "2.2-beta-5";
+    private static final String SCM_CONNETION = "scm:git:git://github.com/clientproject";
+    private static final String SCM_DEVELOPER_CONNETION = "scm:git:git@github.com:clientproject";
+    private static final String SCM_URL = "http://github.com/clientproject";
 
+    // DYNAMIC DEFAULTS
+
+    private String defaultVersion;
 
     @Override
     protected void configure() throws MojoExecutionException {
+        initDefaults();
         readUserInput();
-        MavenExecutor genClientProjectExecutor = getNewMavenExecutor(this);
-        initializeMavenExecutionProperties(genClientProjectExecutor);
-        genClientProjectExecutor.setRecursive(true);
-        addMavenExecutor(genClientProjectExecutor);
+        MavenExecutor genConnectorExecutor = getNewMavenExecutor(this);
+        initializeMavenExecutionProperties(genConnectorExecutor);
+        genConnectorExecutor.setRecursive(true);
+        addMavenExecutor(genConnectorExecutor);
     }
 
     protected void validateIfExecutionIsAllowed() throws MojoExecutionException {
@@ -86,9 +91,14 @@ public class GenClientRoot extends MavenExecutorMojo {
 
     @Override
     protected void postExec() throws MojoExecutionException {
-        System.out.println("Your client project was created successfully");
+        Tools.renameArtifactFolderAndUpdateParentPom(artifactId, "assembly");
+        System.out.println("DON'T FORGET TO ADD THE CONNECTOR TO YOUR RELEASE/ASSEMBLY PROJECT!");
     }
 
+    private void initDefaults() {
+        // version should be the same as the version of the OpenEngSB
+        defaultVersion = getProject().getVersion();
+    }
 
     private void readUserInput() {
         Scanner sc = new Scanner(System.in);
@@ -102,35 +112,39 @@ public class GenClientRoot extends MavenExecutorMojo {
         clientProjectGroupId = Tools.readValueFromStdin(sc, "Project Group Id", PROJECT_GROUPID);
         artifactId = Tools.readValueFromStdin(sc, "Project Artifact Id", PROJECT_ARTIFACTID);
 
-        clientProjectName = Tools.readValueFromStdin(sc, "Project Name", PROJECT_NAME + PROJECT_NAME_SUFFIX);
+        name = Tools.readValueFromStdin(sc, "Project Name", PROJECT_NAME);
+        clientProjectName = name;
         clientProjectVersion = Tools.readValueFromStdin(sc, "Project Version", PROJECT_VERSION);
         clientProjectDescription = Tools.readValueFromStdin(sc, "Project Description", PROJECT_DESCRIPTION);
         clientProjectUrl = Tools.readValueFromStdin(sc, "Project Url", PROJECT_URL);
-
-        openengsbVersion = Tools.readValueFromStdin(sc, "OpenEngSB version", OPENENGSB_VERSION);
-        openengsbMavenPluginVersion = Tools
-            .readValueFromStdin(sc, "OpenEngSB maven plugin Version", OPENENGSB_MAVEN_VERSION);
-        pluginAssemblyVersion = Tools.readValueFromStdin(sc, "Project Artifact Id", PLUGIN_ASSEMBLY_VERSION);
+        version = Tools.readValueFromStdin(sc, "Version", defaultVersion);
+        scmConnection = Tools.readValueFromStdin(sc, "SCM connection", SCM_CONNETION);
+        scmDeveloperConnection = Tools.readValueFromStdin(sc, "SCM developer connection", SCM_DEVELOPER_CONNETION);
+        scmUrl = Tools.readValueFromStdin(sc, "SCM Url", SCM_URL);
+        url = Tools.readValueFromStdin(sc, "Project Url", "");
 
     }
 
     private void initializeMavenExecutionProperties(MavenExecutor executor) {
         List<String> goals = Arrays.asList(new String[]{"archetype:generate"});
+
         Properties userProperties = new Properties();
 
         userProperties.put("archetypeGroupId", ARCHETYPE_GROUPID);
         userProperties.put("archetypeArtifactId", ARCHETYPE_ARTIFACTID);
-        userProperties.put("archetypeVersion", clientProjectVersion);
+        userProperties.put("archetypeVersion", version);
         userProperties.put("artifactId", artifactId);
         userProperties.put("groupId", clientProjectGroupId);
-        userProperties.put("version", clientProjectVersion);
-        userProperties.put("name", clientProjectName);
+        userProperties.put("version", version);
+        userProperties.put("name", name);
+        userProperties.put("clientProjectName", clientProjectName);
+        userProperties.put("url", url);
         userProperties.put("clientProjectDescription", clientProjectDescription);
         userProperties.put("clientProjectUrl", clientProjectUrl);
-        userProperties.put("openengsbVersion", openengsbVersion);
-        userProperties.put("openengsbMavenPluginVersion", openengsbMavenPluginVersion);
-        userProperties.put("pluginAssemblyVersion", pluginAssemblyVersion);
         userProperties.put("parentversion", clientProjectVersion);
+        userProperties.put("scmConnection", scmConnection);
+        userProperties.put("scmDeveloperConnection", scmDeveloperConnection);
+        userProperties.put("scmUrl", scmUrl);
 
         // local archetype catalog only
         if (archetypeCatalogLocalOnly) {
