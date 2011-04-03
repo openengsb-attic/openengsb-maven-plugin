@@ -51,7 +51,12 @@ public class DefaultMavenExecutor implements MavenExecutor {
         LOG.trace("#############################");
         LOG.trace(String.format("session: %s", session));
         LOG.trace("#############################");
-        baseDir = session.getRequest().getPom().getParentFile();
+        try {
+            baseDir = session.getRequest().getPom().getParentFile();
+        } catch (NullPointerException ex) {
+            // no parent, take current
+            baseDir = new File(session.getExecutionRootDirectory());
+        }
         LOG.trace(String.format("basedir: %s", baseDir.toURI().toString()));
         embeddedRequest = generateRequestFromWrapperRequest(session);
         clearProperties(embeddedRequest);
@@ -89,7 +94,7 @@ public class DefaultMavenExecutor implements MavenExecutor {
     }
 
     public void addProperties(List<String> goals, List<String> activatedProfiles, List<String> deactivatedProfiles,
-            Properties userproperties) {
+                              Properties userproperties) {
         addGoals(goals);
         addActivatedProfiles(activatedProfiles);
         addDeactivatedProfiles(deactivatedProfiles);
@@ -119,7 +124,6 @@ public class DefaultMavenExecutor implements MavenExecutor {
         printExecutionStartInfoLog(log);
 
         LOG.trace(String.format("basedir of embedded request: %s", embeddedRequest.getBaseDirectory()));
-        LOG.trace(String.format("pomfile of embedded request: %s", embeddedRequest.getPom().toURI().toString()));
 
         LOG.trace("executing execution request with maven - start");
         MavenExecutionResult result = maven.execute(embeddedRequest);
@@ -205,8 +209,8 @@ public class DefaultMavenExecutor implements MavenExecutor {
             Throwable ex = result.getExceptions().get(0);
             Throwable cause = ex.getCause();
             String errmsg = cause != null ? cause.getMessage() : ex.getMessage();
-            throw new MojoExecutionException(String.format("%s\nFAIL - see log statements above for additional info",
-                    errmsg));
+            throw new MojoExecutionException(
+                String.format("%s\nFAIL - see log statements above for additional info", errmsg));
         }
     }
 
