@@ -60,7 +60,7 @@ public class GenClientRoot extends MavenExecutorMojo {
     private static final String PROJECT_GROUPID = "org.openengsb.client-project";
     private static final String PROJECT_ARTIFACTID = "openengsb-client-project";
 
-    private static final String PROJECT_NAME = "Client-Poject";
+    private static final String PROJECT_NAME = "Client-Project";
     private static final String PROJECT_VERSION = "1.0.0-SNAPSHOT";
     private static final String PROJECT_DESCRIPTION = "This is a client project for the OpenEngSB";
     private static final String PROJECT_URL = "http://www.openenbsb.org";
