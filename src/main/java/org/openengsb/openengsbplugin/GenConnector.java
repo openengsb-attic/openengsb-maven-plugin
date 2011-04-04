@@ -30,15 +30,11 @@ import org.openengsb.openengsbplugin.tools.Tools;
 /**
  * guides through the creation of a connector for the OpenEngSB via the
  * connector archetype
- * 
+ *
  * @goal genConnector
- * 
  * @inheritedByDefault false
- * 
- * @requiresProject true
- * 
+ * @requiresProject false
  * @aggregator true
- * 
  */
 public class GenConnector extends MavenExecutorMojo {
 
@@ -53,28 +49,35 @@ public class GenConnector extends MavenExecutorMojo {
     private String domainGroupId;
     private String domainArtifactId;
     private String artifactId;
+    private String openengsbVersion;
+    private String scmConnection;
+    private String scmDeveloperConnection;
+    private String scmUrl;
 
     // CONSTANTS
     private static final String ARCHETYPE_GROUPID = "org.openengsb.tooling.archetypes";
     private static final String ARCHETYPE_ARTIFACTID = "openengsb-tooling-archetypes-connector";
+    private static final String ARCHETYPE_VERSION = "1.2.0-SNAPSHOT";
 
     private static final String DOMAIN_GROUPIDPREFIX = "org.openengsb.domain.";
+
+    private static final String PROJECT_VERSION = "1.0.0-SNAPSHOT";
+    private static final String OPENENGSB_VERSION = "1.2.0-SNAPSHOT";
     private static final String DOMAIN_ARTIFACTIDPREFIX = "openengsb-domain-";
 
     private static final String CONNECTOR_GROUPID = "org.openengsb.connector";
+
     private static final String CONNECTOR_ARTIFACTIDPREFIX = "openengsb-connector-";
-
-    private static final String DEFAULT_CONNECTORNAME_PREFIX = "OpenEngSB :: Connector :: ";
-
     private static final String DEFAULT_DOMAIN = "domain";
+    private static final String SCM_CONNECTION = "scm:git:git://github" +
+            ".com/openengsb/openengsb-connector-connectorName.git";
+    private static final String SCM_DEVELOPER_CONNECTION =
+            "scm:git:git@github.com:openengsb/openengsb-connector-connectorName.git";
+    private static final String SCM_URL = "http://github.com/openengsb/openengsb-connector-connectorName";
 
-    // DYNAMIC DEFAULTS
-
-    private String defaultVersion;
 
     @Override
     protected void configure() throws MojoExecutionException {
-        initDefaults();
         readUserInput();
         MavenExecutor genConnectorExecutor = getNewMavenExecutor(this);
         initializeMavenExecutionProperties(genConnectorExecutor);
@@ -88,13 +91,7 @@ public class GenConnector extends MavenExecutorMojo {
 
     @Override
     protected void postExec() throws MojoExecutionException {
-        Tools.renameArtifactFolderAndUpdateParentPom(artifactId, connector);
         System.out.println("DON'T FORGET TO ADD THE CONNECTOR TO YOUR RELEASE/ASSEMBLY PROJECT!");
-    }
-
-    private void initDefaults() {
-        // version should be the same as the version of the OpenEngSB
-        defaultVersion = getProject().getVersion();
     }
 
     private void readUserInput() {
@@ -110,26 +107,32 @@ public class GenConnector extends MavenExecutorMojo {
         domaininterface = Tools.readValueFromStdin(sc, "Domain Interface",
                 String.format("%s%s", Tools.capitalizeFirst(domainName), "Domain"));
         connector = Tools.readValueFromStdin(sc, "Connector Name", "myconnector");
-        version = Tools.readValueFromStdin(sc, "Version", defaultVersion);
+        version = Tools.readValueFromStdin(sc, "Version", PROJECT_VERSION);
+        openengsbVersion = Tools.readValueFromStdin(sc, "OpenEngSB Version", OPENENGSB_VERSION);
+
         projectName = Tools.readValueFromStdin(sc, "Project Name",
-                String.format("%s%s", DEFAULT_CONNECTORNAME_PREFIX, Tools.capitalizeFirst(connector)));
+                String.format("%s", Tools.capitalizeFirst(connector)));
 
         domainGroupId = String.format("%s%s", DOMAIN_GROUPIDPREFIX, domainName);
         domainArtifactId = String.format("%s%s", DOMAIN_ARTIFACTIDPREFIX, domainName);
         artifactId = String.format("%s%s", CONNECTOR_ARTIFACTIDPREFIX, connector);
+        scmConnection = Tools.readValueFromStdin(sc, "SCM Connection", SCM_CONNECTION);
+        scmDeveloperConnection = Tools.readValueFromStdin(sc, "SCM Developer Connection", SCM_DEVELOPER_CONNECTION);
+        scmUrl = Tools.readValueFromStdin(sc, "SCM Url", SCM_URL);
     }
 
     private void initializeMavenExecutionProperties(MavenExecutor executor) {
-        List<String> goals = Arrays.asList(new String[] { "archetype:generate" });
+        List<String> goals = Arrays.asList(new String[]{"archetype:generate"});
 
         Properties userProperties = new Properties();
 
         userProperties.put("archetypeGroupId", ARCHETYPE_GROUPID);
         userProperties.put("archetypeArtifactId", ARCHETYPE_ARTIFACTID);
-        userProperties.put("archetypeVersion", version);
+        userProperties.put("archetypeVersion", ARCHETYPE_VERSION);
+        userProperties.put("openengsbVersion", openengsbVersion);
         userProperties.put("domainArtifactId", domainArtifactId);
         userProperties.put("artifactId", artifactId);
-        userProperties.put("connectorNameLC", connector);
+        userProperties.put("connectorName", connector);
         userProperties.put("groupId", CONNECTOR_GROUPID);
         userProperties.put("version", version);
         userProperties.put("domainInterface", domaininterface);
@@ -137,6 +140,9 @@ public class GenConnector extends MavenExecutorMojo {
         userProperties.put("domainPackage", domainGroupId);
         userProperties.put("name", projectName);
         userProperties.put("connectorName", Tools.capitalizeFirst(connector));
+        userProperties.put("scmConnection", scmConnection);
+        userProperties.put("scmDeveloperConnection", scmDeveloperConnection);
+        userProperties.put("scmUrl", scmUrl);
 
         // local archetype catalog only
         if (archetypeCatalogLocalOnly) {
