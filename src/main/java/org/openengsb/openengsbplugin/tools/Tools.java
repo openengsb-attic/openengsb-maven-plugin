@@ -78,8 +78,7 @@ public abstract class Tools {
     }
 
     /**
-     * Renames <code>&lt;module&gt;oldStr&lt;/module&gt;</code> to
-     * <code>&lt;module&gt;newStr&lt;/module&gt;</code>
+     * Renames <code>&lt;module&gt;oldStr&lt;/module&gt;</code> to <code>&lt;module&gt;newStr&lt;/module&gt;</code>
      */
     public static void renameSubmoduleInPom(String oldStr, String newStr) throws MojoExecutionException {
         try {
@@ -125,15 +124,16 @@ public abstract class Tools {
 
     /**
      * Parses an XML document from {@code str} (defaults to namespaceaware = true)
-     * @throws ParserConfigurationException 
-     * @throws IOException 
-     * @throws SAXException 
+     *
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
      */
     public static Document parseXMLFromString(String str) throws ParserConfigurationException, SAXException,
             IOException {
         return parseXMLFromString(str, true);
     }
-    
+
     /**
      * Parses an XML document from {@code str}
      */
@@ -185,9 +185,8 @@ public abstract class Tools {
     }
 
     /**
-     * Insert dom node into {@code parentDoc} at the given {@code xpath} (if
-     * this path doesnt exist, the elements are created). Note: text content of
-     * nodes and attributes aren't considered.
+     * Insert dom node into {@code parentDoc} at the given {@code xpath} (if this path doesnt exist, the elements are
+     * created). Note: text content of nodes and attributes aren't considered.
      */
     public static void insertDomNode(Document parentDoc, Node nodeToInsert, String xpath, NamespaceContext nsContext)
         throws XPathExpressionException {
@@ -256,11 +255,9 @@ public abstract class Tools {
     }
 
     /**
-     * Remove node with given {@code xpath} from {@code targetDocument}. When
-     * {@code removeParent} is set to {@code true} the parent node will also be
-     * removed if the removed node was the only child. The method returns
-     * {@code true} if the node specified by {@code xpath} has been found and
-     * successfully removed from its parent node.
+     * Remove node with given {@code xpath} from {@code targetDocument}. When {@code removeParent} is set to
+     * {@code true} the parent node will also be removed if the removed node was the only child. The method returns
+     * {@code true} if the node specified by {@code xpath} has been found and successfully removed from its parent node.
      */
     public static boolean removeNode(String xpath, Document targetDocument, NamespaceContext nsContext,
             boolean removeParent) throws XPathExpressionException {
@@ -281,7 +278,7 @@ public abstract class Tools {
         }
         return true;
     }
-    
+
     public static Document newDOM() throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);

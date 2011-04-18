@@ -51,15 +51,15 @@ public abstract class LicenseMojo extends ConfiguredMojo {
     private File licenseHeaderFile;
 
     /**
-     * Defines path to a file where each line represents a pattern which to exclude from
-     * license check or license format (additionally to the default excludes).
-     * 
+     * Defines path to a file where each line represents a pattern which to exclude from license check or license format
+     * (additionally to the default excludes).
+     *
      * @parameter expression="${additionalExcludes}"
      */
     private String additionalExcludes;
 
     public LicenseMojo() {
-        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "license/licenseConfig.xml" }));
+        pomConfigs.put("pom.xml", Arrays.asList(new String[]{ "license/licenseConfig.xml" }));
     }
 
     @Override
@@ -71,7 +71,7 @@ public abstract class LicenseMojo extends ConfiguredMojo {
         licenseMojoExecutor.addGoals(goals);
 
         licenseMojoExecutor.setRecursive(true);
-        licenseMojoExecutor.addActivatedProfiles(Arrays.asList(new String[] { cocProfile }));
+        licenseMojoExecutor.addActivatedProfiles(Arrays.asList(new String[]{ cocProfile }));
 
         addMavenExecutor(licenseMojoExecutor);
     }

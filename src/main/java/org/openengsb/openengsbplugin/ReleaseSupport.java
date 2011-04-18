@@ -20,15 +20,15 @@ package org.openengsb.openengsbplugin;
 import org.openengsb.openengsbplugin.base.ReleaseMojo;
 
 /**
- * Mojo to perform support releases. This mojo activates the "support" profile
- * in the project, where you can put your configuration for support releases.
- * 
+ * Mojo to perform support releases. This mojo activates the "support" profile in the project, where you can put your
+ * configuration for support releases.
+ *
  * @goal releaseSupport
- * 
+ *
  * @inheritedByDefault false
- * 
+ *
  * @requiresProject true
- * 
+ *
  * @aggregator true
  */
 public class ReleaseSupport extends ReleaseMojo {

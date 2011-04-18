@@ -28,8 +28,7 @@ import org.openengsb.openengsbplugin.tools.MavenExecutor;
 import org.openengsb.openengsbplugin.tools.Tools;
 
 /**
- * guides through the creation of a connector for the OpenEngSB via the
- * connector archetype
+ * guides through the creation of a connector for the OpenEngSB via the connector archetype
  *
  * @goal genConnector
  * @inheritedByDefault false
@@ -75,7 +74,6 @@ public class GenConnector extends MavenExecutorMojo {
             "scm:git:git@github.com:openengsb/openengsb-connector-connectorName.git";
     private static final String SCM_URL = "http://github.com/openengsb/openengsb-connector-connectorName";
 
-
     @Override
     protected void configure() throws MojoExecutionException {
         readUserInput();
@@ -85,6 +83,7 @@ public class GenConnector extends MavenExecutorMojo {
         addMavenExecutor(genConnectorExecutor);
     }
 
+    @Override
     protected void validateIfExecutionIsAllowed() throws MojoExecutionException {
         throwErrorIfWrapperRequestIsRecursive();
     }
@@ -122,7 +121,7 @@ public class GenConnector extends MavenExecutorMojo {
     }
 
     private void initializeMavenExecutionProperties(MavenExecutor executor) {
-        List<String> goals = Arrays.asList(new String[]{"archetype:generate"});
+        List<String> goals = Arrays.asList(new String[]{ "archetype:generate" });
 
         Properties userProperties = new Properties();
 

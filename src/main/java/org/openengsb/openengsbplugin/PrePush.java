@@ -29,30 +29,30 @@ import org.openengsb.openengsbplugin.tools.MavenExecutor;
 import org.w3c.dom.Document;
 
 /**
- *  
+ *
  * @goal prePush
- * 
+ *
  * @inheritedByDefault false
- * 
+ *
  * @requiresProject true
- * 
+ *
  * @aggregator true
- * 
+ *
  */
 public class PrePush extends ConfiguredMojo {
-    
+
     /**
-     * Defines path to a file where each line represents a pattern which to exclude from
-     * license check or license format (additionally to the default excludes).
-     * 
+     * Defines path to a file where each line represents a pattern which to exclude from license check or license format
+     * (additionally to the default excludes).
+     *
      * @parameter expression="${additionalExcludes}"
      */
     private String additionalExcludes;
-    
+
     public PrePush() {
         pomConfigs.put(
                 "pom.xml",
-                Arrays.asList(new String[] { "license/licenseConfig.xml", "checkstyle/checkstyleConfig.xml",
+                Arrays.asList(new String[]{ "license/licenseConfig.xml", "checkstyle/checkstyleConfig.xml",
                     "integrationTest/integrationTestConfig.xml" }));
     }
 
@@ -61,18 +61,18 @@ public class PrePush extends ConfiguredMojo {
         List<String> goals = new ArrayList<String>();
         goals.add("clean");
         goals.add("install");
-        
+
         List<String> activeProfiles = new ArrayList<String>();
         activeProfiles.add(cocProfile);
-        
+
         MavenExecutor prePushMojoExecutor = getNewMavenExecutor(this);
         prePushMojoExecutor.addGoals(goals);
         prePushMojoExecutor.setRecursive(true);
         prePushMojoExecutor.addActivatedProfiles(activeProfiles);
-        
+
         addMavenExecutor(prePushMojoExecutor);
     }
-    
+
     @Override
     protected void modifyMojoConfiguration(String pomPath, Document configuredPom) throws MojoExecutionException {
         if (pomPath.equals("pom.xml")) {

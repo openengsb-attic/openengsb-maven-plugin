@@ -20,15 +20,15 @@ package org.openengsb.openengsbplugin;
 import org.openengsb.openengsbplugin.base.ReleaseMojo;
 
 /**
- * Mojo to perform final releases. This mojo activates the "final" profile in
- * the project, where you can put your configuration for final releases.
- * 
+ * Mojo to perform final releases. This mojo activates the "final" profile in the project, where you can put your
+ * configuration for final releases.
+ *
  * @goal releaseFinal
- * 
+ *
  * @inheritedByDefault false
- * 
+ *
  * @requiresProject true
- * 
+ *
  * @aggregator true
  */
 public class ReleaseFinal extends ReleaseMojo {

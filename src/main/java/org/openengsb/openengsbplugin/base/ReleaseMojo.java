@@ -26,22 +26,21 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
 public abstract class ReleaseMojo extends ConfiguredMojo {
-    
+
     private static final String CLEANED_POM_COMMIT_MSG = "[openengsb-maven-plugin]: cleaning pom";
 
     /**
-     * The SCM URL to checkout from. If omitted, the one from the
-     * release.properties file is used, followed by the URL from the current
-     * POM.
-     * 
+     * The SCM URL to checkout from. If omitted, the one from the release.properties file is used, followed by the URL
+     * from the current POM.
+     *
      * @parameter expression="${connectionUrl}"
-     * 
+     *
      * @required
      */
     protected String connectionUrl;
 
     public ReleaseMojo() {
-        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "release/releaseCommonConfig.xml" }));
+        pomConfigs.put("pom.xml", Arrays.asList(new String[]{ "release/releaseCommonConfig.xml" }));
     }
 
     protected abstract String getReleaseProfile();
@@ -85,7 +84,7 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
         releasePerformExecutor.setRecursive(true);
 
         addMavenExecutor(releasePerformExecutor);
-        
+
         setPomRestoreMode(PomRestoreMode.CLEAN);
     }
 
@@ -100,8 +99,7 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
     }
 
     /*
-     * commit cleaned pom after the maven executors for release:prepare and
-     * release:perform have finshed work
+     * commit cleaned pom after the maven executors for release:prepare and release:perform have finshed work
      */
     private void commitCleanedPom() throws MojoExecutionException {
         List<String> finalCommitGoals = new ArrayList<String>();
@@ -116,13 +114,11 @@ public abstract class ReleaseMojo extends ConfiguredMojo {
         finalCommitExecutor.addUserProperties(finalCommitUserProps);
 
         /*
-         * execute directly (instead of addMavenExecutor - the maven executors
-         * queue has been already worked off)
+         * execute directly (instead of addMavenExecutor - the maven executors queue has been already worked off)
          */
 
         finalCommitExecutor.execute(getLog());
 
     }
-    
 
 }

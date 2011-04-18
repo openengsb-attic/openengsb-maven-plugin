@@ -28,17 +28,16 @@ import org.openengsb.openengsbplugin.tools.MavenExecutor;
 import org.openengsb.openengsbplugin.tools.Tools;
 
 /**
- * guides through the creation of a domain for the OpenEngSB via the domain
- * archetype
- * 
+ * guides through the creation of a domain for the OpenEngSB via the domain archetype
+ *
  * @goal genDomain
- * 
+ *
  * @inheritedByDefault false
- * 
+ *
  * @requiresProject true
- * 
+ *
  * @aggregator true
- * 
+ *
  */
 public class GenDomain extends MavenExecutorMojo {
 
@@ -78,6 +77,7 @@ public class GenDomain extends MavenExecutorMojo {
         addMavenExecutor(genDomainExecutor);
     }
 
+    @Override
     protected void validateIfExecutionIsAllowed() throws MojoExecutionException {
         throwErrorIfWrapperRequestIsRecursive();
     }
@@ -112,7 +112,7 @@ public class GenDomain extends MavenExecutorMojo {
     }
 
     private void initializeMavenExecutionProperties(MavenExecutor executor) {
-        List<String> goals = Arrays.asList(new String[] { "archetype:generate" });
+        List<String> goals = Arrays.asList(new String[]{ "archetype:generate" });
 
         Properties userProperties = new Properties();
 

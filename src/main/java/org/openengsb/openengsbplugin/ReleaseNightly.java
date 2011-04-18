@@ -27,21 +27,21 @@ import org.openengsb.openengsbplugin.base.ConfiguredMojo;
 import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
 /**
- * Mojo to perform nightly releases. This mojo activates the "nightly" profile
- * in the project, where you can put your configuration for nightly releases.
- * 
+ * Mojo to perform nightly releases. This mojo activates the "nightly" profile in the project, where you can put your
+ * configuration for nightly releases.
+ *
  * @goal releaseNightly
- * 
+ *
  * @inheritedByDefault false
- * 
+ *
  * @requiresProject true
- * 
+ *
  * @aggregator true
  */
 public class ReleaseNightly extends ConfiguredMojo {
 
     public ReleaseNightly() {
-        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "release/nightlyConfig.xml" }));
+        pomConfigs.put("pom.xml", Arrays.asList(new String[]{ "release/nightlyConfig.xml" }));
     }
 
     @Override

@@ -38,15 +38,15 @@ import org.w3c.dom.Node;
 
 /**
  * Validates license headers.
- * 
+ *
  * @goal eclipse
- * 
+ *
  * @inheritedByDefault false
- * 
+ *
  * @requiresProject true
- * 
+ *
  * @aggregator true
- * 
+ *
  */
 public class Eclipse extends ConfiguredMojo {
 
@@ -58,20 +58,20 @@ public class Eclipse extends ConfiguredMojo {
     private File checkstyleCheckerConfig;
 
     public Eclipse() {
-        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "eclipse/eclipseConfig.xml" }));
+        pomConfigs.put("pom.xml", Arrays.asList(new String[]{ "eclipse/eclipseConfig.xml" }));
     }
 
     @Override
     protected void configureCoCMojo() throws MojoExecutionException {
         checkstyleCheckerConfig = writeCheckstyleCheckerConfig();
-        
+
         List<String> goals = new ArrayList<String>();
         goals.add("eclipse:eclipse");
 
         MavenExecutor eclipseMojoExecutor = getNewMavenExecutor(this);
         eclipseMojoExecutor.addGoals(goals);
         eclipseMojoExecutor.setRecursive(true);
-        eclipseMojoExecutor.addActivatedProfiles(Arrays.asList(new String[] { cocProfile }));
+        eclipseMojoExecutor.addActivatedProfiles(Arrays.asList(new String[]{ cocProfile }));
 
         addMavenExecutor(eclipseMojoExecutor);
     }
@@ -125,7 +125,7 @@ public class Eclipse extends ConfiguredMojo {
     }
 
     private void setCheckstyleEclipseConfigLocation(Document configuredPom, String profileXpath,
-        String locationToInsert) throws XPathExpressionException {
+            String locationToInsert) throws XPathExpressionException {
         Node node = configuredPom.createElementNS(POM_NS_URI, "location");
         node.setTextContent(locationToInsert);
 

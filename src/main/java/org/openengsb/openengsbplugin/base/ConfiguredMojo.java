@@ -43,18 +43,18 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public abstract class ConfiguredMojo extends MavenExecutorMojo {
-    
+
     public enum PomRestoreMode {
         CLEAN, RESTORE_BACKUP
     }
 
     private static final Logger LOG = Logger.getLogger(ConfiguredMojo.class);
-    
+
     /**
      * Stores references to poms corresponding to keys in {@link ConfiguredMojo#pomConfigs}
      */
     private HashMap<String, File> poms = new HashMap<String, File>();
-    
+
     /**
      * points to backups of modified poms in the local tmp dir. The key is the original
      * pom in the project (e.g. "docs/pom.xml"), where the value is the
@@ -82,22 +82,22 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     protected static final OpenEngSBMavenPluginNSContext NS_CONTEXT = new OpenEngSBMavenPluginNSContext();
     protected static final String POM_NS_URI = NS_CONTEXT.getNamespaceURI("pom");
     private static final String POM_PROFILE_XPATH = "/pom:project/pom:profiles";
-    
+
     private static final String CONFIGNODE_XPATH = "/c:config";
     private static final String PLUGINS_XPATH = CONFIGNODE_XPATH + "/pom:plugins/pom:plugin";
     private static final String MODULES_XPATH = CONFIGNODE_XPATH + "/pom:modules/pom:module";
     private static final String RESOURCES_XPATH = CONFIGNODE_XPATH + "/pom:resources/pom:resource";
 
     protected static final List<File> FILES_TO_REMOVE_FINALLY = new ArrayList<File>();
-    
+
     private PomRestoreMode pomRestoreMode = PomRestoreMode.RESTORE_BACKUP;
     private boolean pomCleanedSuccessfully = false;
-    
+
     protected Node licenseHeaderComment = null;
 
     /**
      * If set to "true" prints the temporary pom to the console.
-     * 
+     *
      * @parameter expression="${debugMode}" default-value="false"
      */
     private boolean debugMode;
@@ -109,13 +109,13 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         cocProfileXpath = String.format("/pom:project/pom:profiles/pom:profile[pom:id[text()='%s']]",
                 cocProfile);
         configureCoCMojo();
-        
+
         checkForPoms();
         for (String pomPath : poms.keySet()) {
             configureTmpPom(pomPath, poms.get(pomPath), cocProfile);
         }
     }
-    
+
     private void checkForPoms() throws MojoExecutionException {
         for (String pomPath : pomConfigs.keySet()) {
             File pom = new File(pomPath);
@@ -125,11 +125,11 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
             poms.put(pomPath, pom);
         }
     }
-    
+
     /**
      * Configure how to restore (remove the unnecessary temporary profile) the
      * pom after successful mojo execution.
-     * 
+     *
      * @param mode <ul>
      *        <li>{@link PomRestoreMode#RESTORE_BACKUP}: replace the pom with
      *        the backup which has been created at mojo startup - this is the
@@ -142,7 +142,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
      *        <ul>
      */
     protected final void setPomRestoreMode(PomRestoreMode mode) {
-        this.pomRestoreMode = mode;
+        pomRestoreMode = mode;
     }
 
     @Override
@@ -153,7 +153,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
             afterPomCleaned();
         }
     }
-    
+
     /**
      * Template method which may be overwritten by subclasses. It gets executed
      * iff {@link PomRestoreMode} is set to {@link PomRestoreMode#CLEAN} and the
@@ -171,7 +171,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         }
         cleanUp();
     }
-    
+
     /**
      * remove profile with id {@code profile} from the pom (used to clean pom
      * from configuration which gets merged into it during runtime)
@@ -181,13 +181,13 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         try {
             for (File pomFile : poms.values()) {
                 Document docToClean = parsePom(pomFile);
-                
+
                 if (!Tools.removeNode(cocProfileXpath, docToClean, NS_CONTEXT, true)) {
                     throw new MojoExecutionException("Couldn't clean the pom!");
                 }
-                
+
                 String cleanedContent = Tools.serializeXML(docToClean);
-                
+
                 writeIntoPom(getSession().getRequest().getPom(), cleanedContent);
             }
         } catch (Exception e) {
@@ -199,7 +199,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         }
         LOG.trace("pom cleaned successfully");
     }
-    
+
     /**
      * restore backup of the pom which has been created on mojo start
      */
@@ -222,18 +222,18 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
 
     private void configureTmpPom(String pomPath, File pomFile, String profileName) throws MojoExecutionException {
         try {
-            
+
             File backupPom = backupOriginalPom(pomFile);
             pomBackups.put(pomFile, backupPom);
-            
+
             FILES_TO_REMOVE_FINALLY.add(backupPom);
-            
+
             Document pomDocumentToConfigure = parsePom(pomFile);
             Document configDocument = collectConfigsAndBuildProfile(pomPath);
-            
+
             insertConfigProfileIntoOrigPom(pomDocumentToConfigure, configDocument,
                     profileName);
-            
+
             modifyMojoConfiguration(pomPath, pomDocumentToConfigure);
 
             String serializedXml = Tools.serializeXML(pomDocumentToConfigure);
@@ -241,14 +241,14 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
             if (debugMode) {
                 System.out.print(serializedXml);
             }
-            
+
             writeIntoPom(pomFile, serializedXml);
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
             throw new MojoExecutionException("Couldn't configure temporary pom for this execution!", e);
         }
     }
-    
+
     /**
      * If you want to modify the xml configuration of the mojo (e.g. add some
      * configuration which you is not known in
@@ -257,7 +257,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
      */
     protected void modifyMojoConfiguration(String pomPath, Document configuredPom) throws MojoExecutionException {
     }
-    
+
     protected String addHeader(String content) throws IOException {
         String result = "";
         StringReader stringReader = new StringReader(content);
@@ -280,12 +280,12 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         }
 
         br.close();
-        
+
         licenseHeaderComment = null;
-        
+
         return result;
     }
-    
+
     /**
      * parse pom and remove license header if available
      */
@@ -294,7 +294,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         tryExtractLicenseHeader(doc);
         return doc;
     }
-    
+
     protected void tryExtractLicenseHeader(Document doc) {
         Node firstNode = doc.getChildNodes().item(0);
         if (firstNode.getNodeType() == Node.COMMENT_NODE) {
@@ -340,7 +340,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
 
         return profileDoc;
     }
-    
+
     private void collectFromXPathAndImportConfigurations(String xpath, Document source, Document dest,
         Element parentParent, Element targetParent) throws XPathExpressionException {
         NodeList nl = Tools.evaluateXPath(xpath, source, NS_CONTEXT, XPathConstants.NODESET, NodeList.class);
@@ -350,7 +350,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         }
         importNodesFromNodeList(dest, targetParent, nl);
     }
-    
+
     private void importNodesFromNodeList(Document doc, Element parentElement, NodeList nodes) {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node importedNode = doc.importNode(nodes.item(i), true);
@@ -363,7 +363,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
     private void insertConfigProfileIntoOrigPom(Document originalPom, Document mojoConfiguration,
             String profileName) throws XPathExpressionException {
         Node profileNode = mojoConfiguration.getFirstChild();
-        
+
         Node idNode = mojoConfiguration.createElementNS(POM_NS_URI, "id");
         idNode.setTextContent(profileName);
         profileNode.insertBefore(idNode, profileNode.getFirstChild());
@@ -372,7 +372,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
 
         Tools.insertDomNode(originalPom, importedProfileNode, POM_PROFILE_XPATH, NS_CONTEXT);
     }
-    
+
     private void writeIntoPom(File pomFile, String content) throws IOException {
         if (licenseHeaderComment != null) {
             content = addHeader(content);
@@ -386,7 +386,7 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
             FileUtils.deleteQuietly(f);
         }
     }
-    
+
     private File backupOriginalPom(File originalPom) throws IOException {
         return Tools.generateTmpFile(FileUtils.readFileToString(originalPom), ".xml");
     }

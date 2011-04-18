@@ -27,23 +27,22 @@ import org.openengsb.openengsbplugin.base.ConfiguredMojo;
 import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
 /**
- * 
- * Installs the OpenEngSB and skips tests. Furthermore a nightly profile is
- * activated if available in your poms.
- * 
+ *
+ * Installs the OpenEngSB and skips tests. Furthermore a nightly profile is activated if available in your poms.
+ *
  * @goal assemble
- * 
+ *
  * @inheritedByDefault false
- * 
+ *
  * @requiresProject true
- * 
+ *
  * @aggregator true
- * 
+ *
  */
 public class Assemble extends ConfiguredMojo {
 
     public Assemble() {
-        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "assemble/assembleConfig.xml" }));
+        pomConfigs.put("pom.xml", Arrays.asList(new String[]{ "assemble/assembleConfig.xml" }));
     }
 
     @Override
@@ -64,7 +63,7 @@ public class Assemble extends ConfiguredMojo {
         assembleMojoExecutor.addUserProperties(userProperties);
 
         assembleMojoExecutor.setRecursive(true);
-        assembleMojoExecutor.addActivatedProfiles(Arrays.asList(new String[] { "nightly", cocProfile }));
+        assembleMojoExecutor.addActivatedProfiles(Arrays.asList(new String[]{ "nightly", cocProfile }));
 
         addMavenExecutor(assembleMojoExecutor);
     }

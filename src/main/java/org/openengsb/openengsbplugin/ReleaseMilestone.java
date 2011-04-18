@@ -20,16 +20,15 @@ package org.openengsb.openengsbplugin;
 import org.openengsb.openengsbplugin.base.ReleaseMojo;
 
 /**
- * Mojo to perform milestone releases. This mojo activates the "milestone"
- * profile in the project, where you can put your configuration for milestone
- * releases.
- * 
+ * Mojo to perform milestone releases. This mojo activates the "milestone" profile in the project, where you can put
+ * your configuration for milestone releases.
+ *
  * @goal releaseMilestone
- * 
+ *
  * @inheritedByDefault false
- * 
+ *
  * @requiresProject true
- * 
+ *
  * @aggregator true
  */
 public class ReleaseMilestone extends ReleaseMojo {

@@ -11,23 +11,23 @@ import org.openengsb.openengsbplugin.tools.MavenExecutor;
 
 /**
  * Builds documentation, site etc. Should only be invoked from the root dir.
- *  
+ *
  * @goal docs
- * 
+ *
  * @inheritedByDefault false
- * 
+ *
  * @requiresProject true
- * 
+ *
  * @aggregator true
- * 
+ *
  */
 public class Docs extends ConfiguredMojo {
-    
+
     public Docs() {
-        pomConfigs.put("docs/pom.xml", Arrays.asList(new String[] { "docs/docsConfig.xml" }));
-        pomConfigs.put("docs/examples/pom.xml", Arrays.asList(new String[] { "docs/examplesConfig.xml" }));
-        pomConfigs.put("docs/homepage/pom.xml", Arrays.asList(new String[] { "docs/homepageConfig.xml" }));
-        pomConfigs.put("docs/manual/pom.xml", Arrays.asList(new String[] { "docs/manualConfig.xml" }));
+        pomConfigs.put("docs/pom.xml", Arrays.asList(new String[]{ "docs/docsConfig.xml" }));
+        pomConfigs.put("docs/examples/pom.xml", Arrays.asList(new String[]{ "docs/examplesConfig.xml" }));
+        pomConfigs.put("docs/homepage/pom.xml", Arrays.asList(new String[]{ "docs/homepageConfig.xml" }));
+        pomConfigs.put("docs/manual/pom.xml", Arrays.asList(new String[]{ "docs/manualConfig.xml" }));
     }
 
     @Override
@@ -35,19 +35,19 @@ public class Docs extends ConfiguredMojo {
         List<String> goals = new ArrayList<String>();
         goals.add("clean");
         goals.add("install");
-        
+
         List<String> activeProfiles = new ArrayList<String>();
         activeProfiles.add(cocProfile);
-        
+
         Properties userProperties = new Properties();
         userProperties.put("maven.test.skip", "true");
-        
+
         MavenExecutor docsMojoExecutor = getNewMavenExecutor(this);
         docsMojoExecutor.addGoals(goals);
         docsMojoExecutor.addUserProperties(userProperties);
         docsMojoExecutor.setRecursive(true);
         docsMojoExecutor.addActivatedProfiles(activeProfiles);
-        
+
         addMavenExecutor(docsMojoExecutor);
     }
 

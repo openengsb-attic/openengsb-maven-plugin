@@ -33,8 +33,7 @@ public abstract class MavenExecutorMojo extends AbstractOpenengsbMojo {
     private List<MavenExecutor> mavenExecutors = new ArrayList<MavenExecutor>();
 
     /**
-     * runs all {@link MavenExecutor MavenExecutors} queued in
-     * {@link MavenExecutorMojo#mavenExecutors}
+     * runs all {@link MavenExecutor MavenExecutors} queued in {@link MavenExecutorMojo#mavenExecutors}
      */
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
@@ -57,8 +56,7 @@ public abstract class MavenExecutorMojo extends AbstractOpenengsbMojo {
     }
 
     /**
-     * For cleanup tasks which should be performed even if exceptions have
-     * been thrown.
+     * For cleanup tasks which should be performed even if exceptions have been thrown.
      */
     protected void postExecFinally() {
     }

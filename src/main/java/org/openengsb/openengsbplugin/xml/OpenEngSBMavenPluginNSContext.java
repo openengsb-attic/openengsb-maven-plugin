@@ -33,7 +33,7 @@ public class OpenEngSBMavenPluginNSContext implements NamespaceContext {
     }
 
     private void buildNamingContext() {
-        String[][] data = new String[][] {
+        String[][] data = new String[][]{
             { "c", "http://www.openengsb.org/openengsb-maven-plugin/CoCProfile" },
             { "pom", "http://maven.apache.org/POM/4.0.0" } };
 

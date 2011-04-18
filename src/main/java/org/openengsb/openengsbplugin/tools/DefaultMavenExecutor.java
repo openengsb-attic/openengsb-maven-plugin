@@ -69,30 +69,35 @@ public class DefaultMavenExecutor implements MavenExecutor {
         request.getInactiveProfiles().clear();
     }
 
+    @Override
     public void addGoals(List<String> goals) {
         if (goals != null) {
             embeddedRequest.getGoals().addAll(goals);
         }
     }
 
+    @Override
     public void addActivatedProfiles(List<String> activatedProfiles) {
         if (activatedProfiles != null) {
             embeddedRequest.getActiveProfiles().addAll(activatedProfiles);
         }
     }
 
+    @Override
     public void addDeactivatedProfiles(List<String> deactivatedProfiles) {
         if (deactivatedProfiles != null) {
             embeddedRequest.getInactiveProfiles().addAll(deactivatedProfiles);
         }
     }
 
+    @Override
     public void addUserProperties(Properties userproperties) {
         if (userproperties != null) {
             embeddedRequest.getUserProperties().putAll(userproperties);
         }
     }
 
+    @Override
     public void addProperties(List<String> goals, List<String> activatedProfiles, List<String> deactivatedProfiles,
                               Properties userproperties) {
         addGoals(goals);

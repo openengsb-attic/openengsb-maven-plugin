@@ -34,31 +34,31 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 /**
- *  
+ *
  * @goal checkstyle
- * 
+ *
  * @inheritedByDefault false
- * 
+ *
  * @requiresProject true
- * 
+ *
  * @aggregator true
- * 
+ *
  */
 public class Checkstyle extends ConfiguredMojo {
-    
+
     private static final String CHECKSTYLE_CHECKER_PATH_RSRC = "checkstyle/checkstyle.xml";
 
     private File checkstyleCheckerConfigTmp;
-    
+
     /**
      * If set to "true" the clean phase is skipped.
-     * 
+     *
      * @parameter expression="${skipClean}" default-value="false"
      */
     private boolean skipClean;
 
     public Checkstyle() {
-        pomConfigs.put("pom.xml", Arrays.asList(new String[] { "checkstyle/checkstyleConfig.xml" }));
+        pomConfigs.put("pom.xml", Arrays.asList(new String[]{ "checkstyle/checkstyleConfig.xml" }));
     }
 
     @Override
@@ -77,7 +77,7 @@ public class Checkstyle extends ConfiguredMojo {
         checkstyleMojoExecutor.addUserProperties(userProperties);
 
         checkstyleMojoExecutor.setRecursive(true);
-        checkstyleMojoExecutor.addActivatedProfiles(Arrays.asList(new String[] { cocProfile }));
+        checkstyleMojoExecutor.addActivatedProfiles(Arrays.asList(new String[]{ cocProfile }));
 
         addMavenExecutor(checkstyleMojoExecutor);
     }
@@ -85,7 +85,7 @@ public class Checkstyle extends ConfiguredMojo {
     @Override
     protected void validateIfExecutionIsAllowed() throws MojoExecutionException {
     }
-    
+
     public static File createCheckstyleCheckerConfiguration() throws MojoExecutionException {
         try {
             String content = IOUtils.toString(Checkstyle.class.getClassLoader()
@@ -109,7 +109,7 @@ public class Checkstyle extends ConfiguredMojo {
             }
         }
     }
-    
+
     public static void insertCheckstyleConfigLocation(Document configuredPom, String profileXpath, File configFile)
         throws XPathExpressionException {
         Node node = configuredPom.createElementNS(POM_NS_URI, "configLocation");

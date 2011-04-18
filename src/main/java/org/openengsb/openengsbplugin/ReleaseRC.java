@@ -20,15 +20,15 @@ package org.openengsb.openengsbplugin;
 import org.openengsb.openengsbplugin.base.ReleaseMojo;
 
 /**
- * Mojo to perform RC releases. This mojo activates the "rc" profile in the
- * project, where you can put your configuration for RC releases.
- * 
+ * Mojo to perform RC releases. This mojo activates the "rc" profile in the project, where you can put your
+ * configuration for RC releases.
+ *
  * @goal releaseRC
- * 
+ *
  * @inheritedByDefault false
- * 
+ *
  * @requiresProject true
- * 
+ *
  * @aggregator true
  */
 public class ReleaseRC extends ReleaseMojo {
