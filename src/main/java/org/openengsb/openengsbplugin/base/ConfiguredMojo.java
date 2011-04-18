@@ -346,7 +346,6 @@ public abstract class ConfiguredMojo extends MavenExecutorMojo {
         NodeList nl = Tools.evaluateXPath(xpath, source, NS_CONTEXT, XPathConstants.NODESET, NodeList.class);
         LOG.trace(String.format("Found nodes: %s", nl.getLength()));
         if (nl.getLength() == 0) {
-            parentParent.removeChild(targetParent);
             return;
         }
         importNodesFromNodeList(dest, targetParent, nl);
