@@ -138,7 +138,6 @@ public abstract class LicenseMojo extends ConfiguredMojo {
                 + "[pom:groupId='com.mycila.maven-license-plugin' and pom:artifactId='maven-license-plugin']"
                 + "/pom:configuration/pom:excludes";
 
-        @SuppressWarnings("unchecked")
         List<String> lines = FileUtils.readLines(excludesFile);
         for (String line : lines) {
             if (line == null || line.trim().equals("")) {
