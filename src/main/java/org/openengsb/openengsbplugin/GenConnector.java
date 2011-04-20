@@ -43,7 +43,6 @@ public class GenConnector extends MavenExecutorMojo {
     private String domainName;
     private String domaininterface;
     private String connector;
-    private String version;
     private String projectName;
     private String domainGroupId;
     private String domainArtifactId;
@@ -52,6 +51,7 @@ public class GenConnector extends MavenExecutorMojo {
     private String scmConnection;
     private String scmDeveloperConnection;
     private String scmUrl;
+    private String archetypeVersion;
 
     // CONSTANTS
     private static final String ARCHETYPE_GROUPID = "org.openengsb.tooling.archetypes";
@@ -60,7 +60,6 @@ public class GenConnector extends MavenExecutorMojo {
 
     private static final String DOMAIN_GROUPIDPREFIX = "org.openengsb.domain.";
 
-    private static final String PROJECT_VERSION = "1.0.0-SNAPSHOT";
     private static final String OPENENGSB_VERSION = "1.2.0-SNAPSHOT";
     private static final String DOMAIN_ARTIFACTIDPREFIX = "openengsb-domain-";
 
@@ -102,11 +101,11 @@ public class GenConnector extends MavenExecutorMojo {
             archetypeCatalogLocalOnly = true;
         }
 
+        archetypeVersion = Tools.readValueFromStdin(sc, "Archetype Version", ARCHETYPE_VERSION);
         domainName = Tools.readValueFromStdin(sc, "Domain Name", DEFAULT_DOMAIN);
         domaininterface = Tools.readValueFromStdin(sc, "Domain Interface",
                 String.format("%s%s", Tools.capitalizeFirst(domainName), "Domain"));
         connector = Tools.readValueFromStdin(sc, "Connector Name", "myconnector");
-        version = Tools.readValueFromStdin(sc, "Version", PROJECT_VERSION);
         openengsbVersion = Tools.readValueFromStdin(sc, "OpenEngSB Version", OPENENGSB_VERSION);
 
         projectName = Tools.readValueFromStdin(sc, "Project Name",
@@ -127,14 +126,15 @@ public class GenConnector extends MavenExecutorMojo {
 
         userProperties.put("archetypeGroupId", ARCHETYPE_GROUPID);
         userProperties.put("archetypeArtifactId", ARCHETYPE_ARTIFACTID);
-        userProperties.put("archetypeVersion", ARCHETYPE_VERSION);
-        userProperties.put("openengsbVersion", openengsbVersion);
+        userProperties.put("archetypeVersion", archetypeVersion);
         userProperties.put("domainArtifactId", domainArtifactId);
         userProperties.put("artifactId", artifactId);
-        userProperties.put("connectorName", connector);
+        userProperties.put("connectorNameL", connector);
         userProperties.put("groupId", CONNECTOR_GROUPID);
-        userProperties.put("version", version);
+        userProperties.put("version", openengsbVersion);
         userProperties.put("domainInterface", domaininterface);
+        userProperties.put("domain", domainName);
+        userProperties.put("domainName", domainName);
         userProperties.put("package", String.format("%s.%s", CONNECTOR_GROUPID, connector));
         userProperties.put("domainPackage", domainGroupId);
         userProperties.put("name", projectName);
