@@ -67,8 +67,8 @@ public class GenConnector extends MavenExecutorMojo {
 
     private static final String CONNECTOR_ARTIFACTIDPREFIX = "openengsb-connector-";
     private static final String DEFAULT_DOMAIN = "domain";
-    private static final String SCM_CONNECTION = "scm:git:git://github" +
-            ".com/openengsb/openengsb-connector-connectorName.git";
+    private static final String SCM_CONNECTION = "scm:git:git://github"
+            + ".com/openengsb/openengsb-connector-connectorName.git";
     private static final String SCM_DEVELOPER_CONNECTION =
             "scm:git:git@github.com:openengsb/openengsb-connector-connectorName.git";
     private static final String SCM_URL = "http://github.com/openengsb/openengsb-connector-connectorName";
