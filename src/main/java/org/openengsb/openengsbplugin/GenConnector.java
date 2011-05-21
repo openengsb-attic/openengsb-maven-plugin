@@ -29,7 +29,7 @@ import org.openengsb.openengsbplugin.tools.Tools;
 
 /**
  * guides through the creation of a connector for the OpenEngSB via the connector archetype
- *
+ * 
  * @goal genConnector
  * @inheritedByDefault false
  * @requiresProject false
@@ -41,6 +41,8 @@ public class GenConnector extends MavenExecutorMojo {
 
     // INPUT
     private String domainName;
+    private String domainVersion;
+    private String domainRange;
     private String domaininterface;
     private String connector;
     private String projectName;
@@ -67,6 +69,8 @@ public class GenConnector extends MavenExecutorMojo {
 
     private static final String CONNECTOR_ARTIFACTIDPREFIX = "openengsb-connector-";
     private static final String DEFAULT_DOMAIN = "domain";
+    private static final String DEFAULT_DOMAIN_VERSION = "1.2.0";
+    private static final String DEFAULT_DOMAIN_RANGE = "[1.2,1.3)";
     private static final String SCM_CONNECTION = "scm:git:git://github"
             + ".com/openengsb/openengsb-connector-connectorName.git";
     private static final String SCM_DEVELOPER_CONNECTION =
@@ -103,6 +107,8 @@ public class GenConnector extends MavenExecutorMojo {
 
         archetypeVersion = Tools.readValueFromStdin(sc, "Archetype Version", ARCHETYPE_VERSION);
         domainName = Tools.readValueFromStdin(sc, "Domain Name", DEFAULT_DOMAIN);
+        domainVersion = Tools.readValueFromStdin(sc, "Domain Version", DEFAULT_DOMAIN_VERSION);
+        domainRange = Tools.readValueFromStdin(sc, "Domain Version Range", DEFAULT_DOMAIN_RANGE);
         domaininterface = Tools.readValueFromStdin(sc, "Domain Interface",
                 String.format("%s%s", Tools.capitalizeFirst(domainName), "Domain"));
         connector = Tools.readValueFromStdin(sc, "Connector Name", "myconnector");
@@ -134,6 +140,8 @@ public class GenConnector extends MavenExecutorMojo {
         userProperties.put("version", openengsbVersion);
         userProperties.put("domainInterface", domaininterface);
         userProperties.put("domain", domainName);
+        userProperties.put("domainVersion", domainVersion);
+        userProperties.put("domainRange", domainRange);
         userProperties.put("domainName", domainName);
         userProperties.put("package", String.format("%s.%s", CONNECTOR_GROUPID, connector));
         userProperties.put("domainPackage", domainGroupId);
