@@ -146,6 +146,7 @@
     </module>
     <module name="UncommentedMain"/>
   </module>
+  <module name="NewlineAtEndOfFile"/>
   <module name="FileLength"/>
   <module name="FileTabCharacter"/>
   <module name="Translation"/>
