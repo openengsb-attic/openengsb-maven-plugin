@@ -30,6 +30,7 @@
 <module name="Checker">
   <property name="severity" value="error"/>
   <module name="TreeWalker">
+    <module name="FileContentsHolder"/>
     <module name="ConstantName"/>
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>
@@ -146,6 +147,8 @@
     </module>
     <module name="UncommentedMain"/>
   </module>
+  
+  <module name="SuppressionCommentFilter"/>
   <module name="FileLength"/>
   <module name="FileTabCharacter"/>
   <module name="Translation"/>
