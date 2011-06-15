@@ -162,7 +162,11 @@ public abstract class Tools {
     }
 
     public static File generateTmpFile(String content, String suffix) throws IOException {
-        File f = File.createTempFile(UUID.randomUUID().toString(), suffix);
+        return generateTmpFileInDirectory(content, suffix, null);
+    }
+
+    public static File generateTmpFileInDirectory(String content, String suffix, File directory) throws IOException {
+        File f = File.createTempFile(UUID.randomUUID().toString(), suffix, directory);
         FileUtils.writeStringToFile(f, content);
         LOG.debug(String.format("generated file: %s", f.toURI().toString()));
         return f;
