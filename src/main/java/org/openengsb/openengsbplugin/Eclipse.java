@@ -92,7 +92,7 @@ public class Eclipse extends ConfiguredMojo {
             node.getAttributes().getNamedItem("location").setTextContent(checkstyleCheckerConfig.getAbsolutePath());
             checkstyleEclipseConfigContent = Tools.serializeXML(configDocument);
             checkstyleEclipseConfigContent = addHeader(checkstyleEclipseConfigContent);
-            return Tools.generateTmpFile(checkstyleEclipseConfigContent, ".xml");
+            return Tools.generateTmpFileInDirectory(checkstyleEclipseConfigContent, ".xml", new File("."));
         } catch (Exception e) {
             throw new MojoExecutionException("Couldn't create checkstyle checker config file!", e);
         }
@@ -117,7 +117,7 @@ public class Eclipse extends ConfiguredMojo {
                 File checkstyleEclipseConfig = writeCheckstyleEclipseConfigAndSetCheckerConfigPath();
                 FILES_TO_REMOVE_FINALLY.add(checkstyleEclipseConfig);
                 setCheckstyleEclipseConfigLocation(configuredPom, cocProfileXpath,
-                        checkstyleEclipseConfig.getAbsolutePath());
+                        checkstyleEclipseConfig.getPath());
             } catch (XPathExpressionException e) {
                 throw new MojoExecutionException(e.getMessage(), e);
             }
