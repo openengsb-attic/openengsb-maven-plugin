@@ -18,9 +18,7 @@ upgrades to the latest versions of the OpenEngSB Parent (17), OPS4J Pax Runner (
     * [OPENENGSB-1623] - Upgrade to openengsb-root-17
     * [OPENENGSB-1624] - Upgrade pax-runner-platform to 1.7.3
     * [OPENENGSB-1681] - Upgrade maven-license-plugin to 1.9.0
-    * [OPENENGSB-1722] - Upgrade maven-plugin-plugin to 2.8
     * [OPENENGSB-1723] - Upgrade pax runner to 1.7.4
-    * [OPENENGSB-1724] - Upgrade maven-notice-plugin to 1.0.4
 
 ** Task
     * [OPENENGSB-1363] - Release openengsb-maven-plugin-1.4.2
