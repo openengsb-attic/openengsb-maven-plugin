@@ -111,6 +111,7 @@
       <plugin>
         <groupId>org.jasig.maven</groupId>
         <artifactId>maven-notice-plugin</artifactId>
+        <version>1.0.4</version>
         <configuration>
           <noticeTemplate>${notice.template}</noticeTemplate>
         </configuration>
