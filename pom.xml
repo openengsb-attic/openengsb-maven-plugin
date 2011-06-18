@@ -94,7 +94,7 @@
     <dependency>
       <groupId>org.ops4j.pax.runner</groupId>
       <artifactId>pax-runner-platform</artifactId>
-      <version>1.7.3</version>
+      <version>1.7.4</version>
     </dependency>
   </dependencies>
 
