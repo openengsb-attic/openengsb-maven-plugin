@@ -68,16 +68,7 @@ public class Provision extends AbstractOpenengsbMojo {
     		throw new MojoExecutionException(String.format("Provision script not found at '%s'", scriptFile.getAbsolutePath()));
         }
 
-    	try {
-    	    CommandLineBuilder command = new CommandLineBuilder();
-    	    
-    	    command.append(scriptFile.getAbsolutePath());
-    	    
-    	    new OpenEngSBJavaRunner(command, new HashMap<String, String>()).exec();
-    	    
-    	} catch (Exception e) {
-		    throw new MojoExecutionException(e.getMessage(), e);
-		}
+        throw new MojoExecutionException(String.format("Please use provision script provided at '%s'", scriptFile.getAbsolutePath()));
     }
 
 }
