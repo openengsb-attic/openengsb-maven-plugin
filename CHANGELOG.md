@@ -1,3 +1,34 @@
+openengsb-maven-plugin-1.5.0 2011-07-13
+--------------------------------------------
+
+Although this release does not contain those killer features, compared to 1.4.x it requires various files to be chnaged 
+in the sources and does not allow a simply switch.
+
+Release Notes - OpenEngSB - Version openengsb-maven-plugin-1.5.0
+
+** Bug
+    * [OPENENGSB-1359] - Missing licenses and checkstyle errors
+    * [OPENENGSB-1676] - openengsb:eclipse does not work
+
+** Improvement
+    * [OPENENGSB-1330] - update connector mojo in openengsb-maven-plugin 
+    * [OPENENGSB-1606] - add module for disabling checkstyle via comments to checkstyle.xml
+    * [OPENENGSB-1620] - Also handle domainVersion and domainRange in openengsb-maven-plugin
+
+** Library Upgrade
+    * [OPENENGSB-1357] - Upgrade to openengsb-root-14
+    * [OPENENGSB-1623] - Upgrade to openengsb-root-17
+    * [OPENENGSB-1624] - Upgrade pax-runner-platform to 1.7.3
+    * [OPENENGSB-1681] - Upgrade maven-license-plugin to 1.9.0
+    * [OPENENGSB-1723] - Upgrade pax runner to 1.7.4
+
+** Task
+    * [OPENENGSB-1302] - Release openengsb-maven-plugin-1.5.0
+    * [OPENENGSB-1650] - Checkstyle rule for newline at end of file
+    * [OPENENGSB-1664] - replace openengsb:provision with run2.sh
+    * [OPENENGSB-1753] - Disable openengsb:provision until Java 1.7 is available
+
+
 openengsb-maven-plugin-1.4.0 2011-04-18
 --------------------------------------------
 
