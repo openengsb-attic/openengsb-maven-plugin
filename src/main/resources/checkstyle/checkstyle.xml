@@ -147,7 +147,9 @@
     </module>
     <module name="UncommentedMain"/>
   </module>
-  <module name="NewlineAtEndOfFile"/>
+  <module name="NewlineAtEndOfFile">
+    <property name="lineSeparator" value="lf"/>
+  </module>
   <module name="SuppressionCommentFilter"/>
   <module name="FileLength"/>
   <module name="FileTabCharacter"/>
