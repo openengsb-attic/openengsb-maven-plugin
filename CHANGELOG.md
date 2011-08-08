@@ -1,3 +1,17 @@
+openengsb-maven-plugin-1.5.1 2011-08-08
+--------------------------------------------
+
+The 1.5.1 release of the OpenEngSB maven plugin fixes a critical windows checkstyle error
+
+Release Notes - OpenEngSB - Version openengsb-maven-plugin-1.5.1
+
+** Bug
+    * [OPENENGSB-1850] - in windows checkstyle expects CRLF at end of file
+
+** Task
+    * [OPENENGSB-1817] - Release openengsb-maven-plugin-1.5.1
+
+
 openengsb-maven-plugin-1.5.0 2011-07-13
 --------------------------------------------
 
