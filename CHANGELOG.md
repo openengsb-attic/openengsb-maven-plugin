@@ -8,8 +8,13 @@ Release Notes - OpenEngSB - Version openengsb-maven-plugin-1.5.1
 ** Bug
     * [OPENENGSB-1850] - in windows checkstyle expects CRLF at end of file
 
+** Library Upgrade
+    * [OPENENGSB-1888] - Upgrade openengsb-root to 19
+    * [OPENENGSB-1890] - Upgrade commons-compress to 1.2
+
 ** Task
     * [OPENENGSB-1817] - Release openengsb-maven-plugin-1.5.1
+    * [OPENENGSB-1889] - Adapt name of openengsb-maven-plugin project name
 
 
 openengsb-maven-plugin-1.5.0 2011-07-13
