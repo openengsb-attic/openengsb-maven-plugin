@@ -39,7 +39,7 @@ import org.ops4j.pax.runner.platform.internal.CommandLineBuilder;
  */
 public class Provision extends AbstractOpenengsbMojo {
     
-    private static String SCRIPT_PATH_DEFAULT = "etc/scripts/run2.sh";
+    private static String SCRIPT_PATH_DEFAULT = "etc/scripts/run.sh";
 
     /**
      * The (relative) path to the script to be run for provisioning
