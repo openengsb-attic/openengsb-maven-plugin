@@ -1,11 +1,40 @@
+openengsb-maven-plugin-2.0.0 2011-09-20
+--------------------------------------------
+
+This release marks an important milestone in the development of the openengsb-maven-plugin switching to semantical
+versioning. Mainly we've fixed three bugs in the openengsb goals. In addition this release enhanced the checkstyle
+plugin usage a little bit. Finally we've upgraded various references such as openengsb-root (20), commons-compress (1.2)
+and junit (4.9).
+
+### Details
+** Bug
+    * [OPENENGSB-1850] - in windows checkstyle expects CRLF at end of file
+    * [OPENENGSB-1953] - openengsb:provision points to wrong script
+    * [OPENENGSB-1990] - openengsb:eclipse does still not work
+
+** Improvement
+    * [OPENENGSB-2039] - Instead of strange release versions checkstyle config should be done in root
+    * [OPENENGSB-2042] - Remove UncommentedMain check from checkstyle configuration
+
+** Library Upgrade
+    * [OPENENGSB-1888] - Upgrade openengsb-root to 19
+    * [OPENENGSB-1890] - Upgrade commons-compress to 1.2
+    * [OPENENGSB-2037] - Upgrade to openengsb-root-20
+    * [OPENENGSB-2040] - Upgrade junit to 4.9
+    * [OPENENGSB-2041] - Upgrade pax-runner-platfrom to 1.7.5
+
+** Task
+    * [OPENENGSB-1818] - Release openengsb-maven-plugin-2.0.0
+    * [OPENENGSB-1889] - Adapt name of openengsb-maven-plugin project name
+
+
 openengsb-maven-plugin-1.5.0 2011-07-13
 --------------------------------------------
 
-Although this release does not contain those killer features, compared to 1.4.x it requires various files to be chnaged 
+Although this release does not contain those killer features, compared to 1.4.x it requires various files to be changed 
 in the sources and does not allow a simply switch.
 
-Release Notes - OpenEngSB - Version openengsb-maven-plugin-1.5.0
-
+### Details
 ** Bug
     * [OPENENGSB-1359] - Missing licenses and checkstyle errors
     * [OPENENGSB-1676] - openengsb:eclipse does not work
