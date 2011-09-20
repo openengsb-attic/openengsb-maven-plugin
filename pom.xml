@@ -27,7 +27,7 @@
     <!-- plugin version -->
     <maven.plugin.checkstyle.version>2.6</maven.plugin.checkstyle.version>
     <!-- maven-notice-plugin -->
-    <notice.template>https://github.com/openengsb/openengsb/raw/master/etc/notice/NOTICE.template</notice.template>
+    <notice.template>https://github.com/openengsb/openengsb-framework/raw/master/etc/notice/NOTICE.template</notice.template>
   </properties>
 
   <parent>
@@ -116,20 +116,6 @@
       </plugin>
     </plugins>
   </build>
-
-  <repositories>
-    <repository>
-      <id>sonatype</id>
-      <name>sonatype</name>
-      <url>http://repository.sonatype.org/content/groups/sonatype-public-grid</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
 
 </project>
 

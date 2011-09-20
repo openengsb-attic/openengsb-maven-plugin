@@ -22,6 +22,7 @@ This project includes:
   Commons Compress under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Google Guice - Core Library under The Apache Software License, Version 2.0
+  Hamcrest Core under BSD style
   JUnit under Common Public License Version 1.0
   Maven Aether Provider under The Apache Software License, Version 2.0
   Maven Artifact under The Apache Software License, Version 2.0
@@ -32,7 +33,7 @@ This project includes:
   Maven Repository Metadata Model under The Apache Software License, Version 2.0
   Maven Settings under The Apache Software License, Version 2.0
   Maven Settings Builder under The Apache Software License, Version 2.0
-  OpenEngSB :: OpenEngSB-Maven-Plugin under Apache 2
+  OpenEngSB Maven Plugin under Apache 2
   OPS4J Base - IO under ALv2
   OPS4J Base - Lang under ALv2
   OPS4J Base - Monitors under ALv2
