@@ -1,3 +1,20 @@
+openengsb-maven-plugin-2.1.0 2011-09-21
+--------------------------------------------
+
+The runtime requirements fail in some builds and make a hassle of builds. Those problems had been fixed. Besides the
+openengsb-root pom had been upgraded to version 21.
+
+### Details
+** Improvement
+    * [OPENENGSB-2068] - Remove all direct requirements to the runtime environment
+
+** Library Upgrade
+    * [OPENENGSB-2070] - Upgrade to openengsb-root-21
+
+** Task
+    * [OPENENGSB-2045] - Release openengsb-maven-plugin-2.1.0
+
+
 openengsb-maven-plugin-2.0.0 2011-09-20
 --------------------------------------------
 
