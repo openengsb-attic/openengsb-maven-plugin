@@ -103,7 +103,6 @@
     <plugin>
       <groupId>net.sourceforge.docbook-utils.maven-plugin</groupId>
       <artifactId>maven-tidy-plugin</artifactId>
-      <version>1.0.0.beta-1</version>
       <executions>
         <execution>
           <phase>process-resources</phase>
