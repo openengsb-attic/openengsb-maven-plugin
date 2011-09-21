@@ -29,7 +29,6 @@
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-resources-plugin</artifactId>
-      <version>${maven.plugin.resources.version}</version>
       <executions>
         <execution>
           <id>resources</id>
@@ -43,7 +42,6 @@
     <plugin>
       <groupId>com.agilejava.docbkx</groupId>
       <artifactId>docbkx-maven-plugin</artifactId>
-      <version>${docbkx.version}</version>
       <executions>
         <execution>
           <id>html-single</id>
@@ -145,21 +143,21 @@
         <dependency>
           <groupId>net.sf.docbook</groupId>
           <artifactId>docbook-xml</artifactId>
-          <version>${docbkx.xml.version}</version>
+          <version>5.0-all</version>
           <scope>runtime</scope>
           <classifier>resources</classifier>
           <type>zip</type>
         </dependency>
         <dependency>
-          <groupId>com.sun</groupId>
+          <groupId>javax.media</groupId>
           <artifactId>jai_core</artifactId>
-          <version>${jai.version}</version>
+          <version>1.1.3</version>
           <scope>runtime</scope>
         </dependency>
         <dependency>
-          <groupId>com.sun</groupId>
+          <groupId>com.sun.media</groupId>
           <artifactId>jai_codec</artifactId>
-          <version>${jai.version}</version>
+          <version>1.1.2</version>
           <scope>runtime</scope>
         </dependency>
       </dependencies>

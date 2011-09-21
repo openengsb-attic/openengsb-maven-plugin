@@ -24,7 +24,6 @@
       <inherited>false</inherited>
       <groupId>com.mycila.maven-license-plugin</groupId>
       <artifactId>maven-license-plugin</artifactId>
-      <version>1.9.0</version>
       <configuration>
         <!-- header is added dynamically -->
         <failIfMissing>true</failIfMissing>
