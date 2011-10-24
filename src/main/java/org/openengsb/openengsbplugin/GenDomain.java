@@ -24,52 +24,58 @@ import java.util.Scanner;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.openengsb.openengsbplugin.base.MavenExecutorMojo;
+import org.openengsb.openengsbplugin.exceptions.NoVersionFoundException;
 import org.openengsb.openengsbplugin.tools.MavenExecutor;
+import org.openengsb.openengsbplugin.tools.OpenEngSBVersionResolver;
 import org.openengsb.openengsbplugin.tools.Tools;
 
 /**
  * guides through the creation of a domain for the OpenEngSB via the domain archetype
  *
  * @goal genDomain
- *
  * @inheritedByDefault false
- *
- * @requiresProject true
- *
+ * @requiresProject false
  * @aggregator true
- *
  */
 public class GenDomain extends MavenExecutorMojo {
 
     private boolean archetypeCatalogLocalOnly = false;
 
     // INPUTS
+    private String archetypeVersion;
 
     private String domainName;
     private String version;
     private String projectName;
-
     private String groupId;
     private String artifactId;
 
     // CONSTANTS
     private static final String ARCHETYPE_GROUPID = "org.openengsb.tooling.archetypes";
-    private static final String ARCHETYPE_ARTIFACTID = "openengsb-tooling-archetypes-domain";
+    private static final String ARCHETYPE_ARTIFACTID = "org.openengsb.tooling.archetypes.domain";
 
     private static final String DOMAIN_GROUPIDPREFIX = "org.openengsb.domain.";
-    private static final String DOMAIN_ARTIFACTIDPREFIX = "openengsb-domain-";
+
+    private static final String DOMAIN_ARTIFACTIDPREFIX = "org.openengsb.domain.";
 
     private static final String DEFAULT_DOMAIN = "mydomain";
 
     private static final String DEFAULT_DOMAINNAME_PREFIX = "OpenEngSB :: Domain :: ";
 
     // DYNAMIC DEFAULTS
-
-    private String defaultVersion;
+    private static final String DEFAULT_VERSION = "1.0.0-SNAPSHOT";
 
     @Override
     protected void configure() throws MojoExecutionException {
-        initDefaults();
+        OpenEngSBVersionResolver versionResolver = new OpenEngSBVersionResolver();
+        try {
+            archetypeVersion = versionResolver.getLatestVersion();
+        } catch (NoVersionFoundException e) {
+            System.err.println("#############################################################");
+            System.err.println("AN ERROR OCCURED: " + e.getMessage());
+            System.err.println("#############################################################");
+            archetypeVersion = "";
+        }
         readUserInput();
         MavenExecutor genDomainExecutor = getNewMavenExecutor(this);
         initializeMavenExecutionProperties(genDomainExecutor);
@@ -88,10 +94,6 @@ public class GenDomain extends MavenExecutorMojo {
         System.out.println("DON'T FORGET TO ADD THE DOMAIN TO YOUR RELEASE/ASSEMBLY PROJECT!");
     }
 
-    private void initDefaults() {
-        // version should be the same as the version of the OpenEngSB
-        defaultVersion = getProject().getVersion();
-    }
 
     private void readUserInput() {
         Scanner sc = new Scanner(System.in);
@@ -101,33 +103,32 @@ public class GenDomain extends MavenExecutorMojo {
         if (in.equalsIgnoreCase("y")) {
             archetypeCatalogLocalOnly = true;
         }
-
+        archetypeVersion = Tools.readValueFromStdin(sc, "Archetype Version", archetypeVersion);
         domainName = Tools.readValueFromStdin(sc, "Domain Name", DEFAULT_DOMAIN);
-        version = Tools.readValueFromStdin(sc, "Version", defaultVersion);
+        version = Tools.readValueFromStdin(sc, "Domain Version", DEFAULT_VERSION);
         projectName = Tools.readValueFromStdin(sc, "Prefix for project names",
-                String.format("%s%s", DEFAULT_DOMAINNAME_PREFIX, Tools.capitalizeFirst(domainName)));
+            String.format("%s%s", DEFAULT_DOMAINNAME_PREFIX, Tools.capitalizeFirst(domainName)));
 
         groupId = String.format("%s%s", DOMAIN_GROUPIDPREFIX, domainName);
         artifactId = String.format("%s%s", DOMAIN_ARTIFACTIDPREFIX, domainName);
     }
 
     private void initializeMavenExecutionProperties(MavenExecutor executor) {
-        List<String> goals = Arrays.asList(new String[]{ "archetype:generate" });
+        List<String> goals = Arrays.asList("archetype:generate");
 
         Properties userProperties = new Properties();
 
         userProperties.put("archetypeGroupId", ARCHETYPE_GROUPID);
         userProperties.put("archetypeArtifactId", ARCHETYPE_ARTIFACTID);
-        userProperties.put("archetypeVersion", version);
+        userProperties.put("archetypeVersion", archetypeVersion);
         userProperties.put("groupId", groupId);
         userProperties.put("artifactId", artifactId);
         userProperties.put("version", version);
+        userProperties.put("openengsbVersion", archetypeVersion);
         userProperties.put("domainName", domainName);
-        userProperties.put("implementationArtifactId", artifactId);
         userProperties.put("package", groupId);
         userProperties.put("name", projectName);
         userProperties.put("domainInterface", String.format("%s%s", Tools.capitalizeFirst(domainName), "Domain"));
-        userProperties.put("implementationName", projectName);
 
         // local archetype catalog only
         if (archetypeCatalogLocalOnly) {
