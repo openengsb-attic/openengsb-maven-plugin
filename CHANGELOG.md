@@ -1,3 +1,22 @@
+openengsb-maven-plugin-2.2.0 2011-10-31
+--------------------------------------------
+
+The second feature release of the openengsb-maven-plugin contains one important new feature: automatic version
+resolving for openengsb-archetypes. The maven plugin choses now automatically the latest version of the openengsb
+and archetypes available in m2 central to use. In addition we've upgraded openengsb-root (24) and junit (4.10).
+
+### Details
+** Improvement
+    * [OPENENGSB-2245] - Adapt the maven plugin to archetype changes
+
+** Library Upgrade
+    * [OPENENGSB-2246] - Upgrade to openengsb-root 24
+    * [OPENENGSB-2247] - Upgrade to junit 4.10
+
+** Task
+    * [OPENENGSB-2073] - Release openengsb-maven-plugin-2.2.0
+
+
 openengsb-maven-plugin-2.1.0 2011-09-21
 --------------------------------------------
 
