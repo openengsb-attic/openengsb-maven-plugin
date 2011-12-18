@@ -60,7 +60,6 @@
   </scm>
 
   <dependencies>
-    <!-- openengsb -->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
@@ -84,7 +83,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
-      <version>1.2</version>
+      <version>1.3</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
