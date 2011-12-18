@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<para>
+<programlisting language="xml"><![CDATA[
+  <service id="abc" interface="a.b.c">
+    <bean class="a.b.d" />
+  </service>
+]]>
+</programlisting>
+</para>
