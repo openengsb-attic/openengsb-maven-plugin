@@ -22,7 +22,7 @@ import java.io.File;
 /**
  * Extractor able to find extractions from xml source files.
  */
-public class XmlSourceExtractor implements AnnotatedSourceExtractor {
+public class OpenEngSBMavenPluginXmlSourceExtractor implements AnnotatedSourceExtractor {
 
     private static final String FILE_ENDING = ".xml";
     private static final String START_ANNOTATION = "<!-- @extract-start";
@@ -32,17 +32,20 @@ public class XmlSourceExtractor implements AnnotatedSourceExtractor {
 
     @Override
     public boolean canExtractFile(File file) {
+        if (file.getName().indexOf("OpenEngSBMavenPluginXmlSourceExtractor") != -1) {
+            return false;
+        }
         return file.getName().endsWith(FILE_ENDING);
     }
 
     @Override
     public boolean isStartLine(String line) {
-        return line.contains(END_ANNOTATION);
+        return line.contains(START_ANNOTATION);
     }
 
     @Override
     public boolean isStopLine(String line) {
-        return line.contains(START_ANNOTATION);
+        return line.contains(END_ANNOTATION);
     }
 
     @Override

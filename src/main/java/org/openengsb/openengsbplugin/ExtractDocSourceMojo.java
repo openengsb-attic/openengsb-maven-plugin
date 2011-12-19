@@ -25,13 +25,14 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.openengsb.openengsbplugin.extract.AnnotatedSourceExtractor;
-import org.openengsb.openengsbplugin.extract.JavaSourceExtractor;
-import org.openengsb.openengsbplugin.extract.PropSourceExtractor;
-import org.openengsb.openengsbplugin.extract.XmlSourceExtractor;
+import org.openengsb.openengsbplugin.extract.OpenEngSBMavenPluginJavaSourceExtractor;
+import org.openengsb.openengsbplugin.extract.OpenEngSBMavenPluginPropSourceExtractor;
+import org.openengsb.openengsbplugin.extract.OpenEngSBMavenPluginXmlSourceExtractor;
 
 import com.google.common.collect.Lists;
 
@@ -65,8 +66,8 @@ public class ExtractDocSourceMojo extends AbstractMojo {
     /**
      * All extractors which should be searched for the possibility to extract source.
      */
-    private List<AnnotatedSourceExtractor> sourceExtractors = Lists.newArrayList(new JavaSourceExtractor(),
-        new XmlSourceExtractor(), new PropSourceExtractor());
+    private List<AnnotatedSourceExtractor> sourceExtractors = Lists.newArrayList(new OpenEngSBMavenPluginJavaSourceExtractor(),
+        new OpenEngSBMavenPluginXmlSourceExtractor(), new OpenEngSBMavenPluginPropSourceExtractor());
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -111,7 +112,7 @@ public class ExtractDocSourceMojo extends AbstractMojo {
         BufferedWriter writer = null;
         while ((line = reader.readLine()) != null) {
             if (extract) {
-                if (extractor.isStartLine(line)) {
+                if (extractor.isStopLine(line)) {
                     closeFile(writer);
                     extract = false;
                     writer = null;
@@ -121,8 +122,11 @@ public class ExtractDocSourceMojo extends AbstractMojo {
                     writer.newLine();
                 }
             } else {
-                if (extractor.isStopLine(line)) {
+                if (extractor.isStartLine(line)) {
                     String name = extractor.extractTargetFilenameFromLine(line);
+                    if (StringUtils.isEmpty(name)) {
+                        continue;
+                    }
                     extract = true;
                     writer = createXiIncludeFile(name, extractor.getLanguage());
                 }
@@ -134,6 +138,7 @@ public class ExtractDocSourceMojo extends AbstractMojo {
     }
 
     private BufferedWriter createXiIncludeFile(String file, String language) throws Exception {
+        targetPath.mkdirs();
         File targetFile = new File(targetPath, file + ".xml");
         BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile));
         writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
