@@ -20,28 +20,32 @@ package org.openengsb.openengsbplugin.extract;
 import java.io.File;
 
 /**
- * Extractor able to find extractions from java source files.
+ * Extractor able to find extractions from property source files.
  */
-public class JavaSourceExtractor implements AnnotatedSourceExtractor {
+public class OpenEngSBMavenPluginPropSourceExtractor implements AnnotatedSourceExtractor {
 
-    private static final String FILE_ENDING = ".java";
-    private static final String START_ANNOTATION = "// @extract-start";
-    private static final String END_ANNOTATION = "// @extract-end";
-    private static final String HIGHLIGHT = "java";
+    private static final String FILE_ENDING_PROP = ".properties";
+    private static final String FILE_ENDING_CFG = ".cfg";
+    private static final String START_ANNOTATION = "# @extract-start";
+    private static final String END_ANNOTATION = "# @extract-end";
+    private static final String HIGHLIGHT = "properties";
 
     @Override
     public boolean canExtractFile(File file) {
-        return file.getName().endsWith(FILE_ENDING);
+        if (file.getName().indexOf("OpenEngSBMavenPluginPropSourceExtractor") != -1) {
+            return false;
+        }
+        return file.getName().endsWith(FILE_ENDING_PROP) || file.getName().endsWith(FILE_ENDING_CFG);
     }
 
     @Override
     public boolean isStartLine(String line) {
-        return line.contains(END_ANNOTATION);
+        return line.contains(START_ANNOTATION);
     }
 
     @Override
     public boolean isStopLine(String line) {
-        return line.contains(START_ANNOTATION);
+        return line.contains(END_ANNOTATION);
     }
 
     @Override
