@@ -1,3 +1,18 @@
+openengsb-maven-plugin-2.3.1 2011-12-23
+--------------------------------------------
+
+This release was only required to make it possible to get a clean documentation on the homepage (which required
+openengsb-root-28, which on the other hand required openengsb-maven-plugin-2.3.0).
+
+### Details
+** Library Upgrade
+    * [OPENENGSB-2458] - Upgrade to root-28
+    * [OPENENGSB-2459] - Reactivate source parsing
+
+** Task
+    * [OPENENGSB-2456] - Release openengsb-maven-plugin 2.3.1
+
+
 openengsb-maven-plugin-2.3.0 2011-12-23
 --------------------------------------------
 
