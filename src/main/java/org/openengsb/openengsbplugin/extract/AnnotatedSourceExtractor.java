@@ -19,6 +19,7 @@ package org.openengsb.openengsbplugin.extract;
 
 import java.io.File;
 
+// @extract-start AnnotatedSourceExtractor
 /**
  * Base interface which needs to be implemented to add an additional source type to analyse.
  */
@@ -52,3 +53,4 @@ public interface AnnotatedSourceExtractor {
     String getLanguage();
 
 }
+// @extract-end
