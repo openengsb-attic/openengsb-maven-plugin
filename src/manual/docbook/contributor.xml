@@ -15,7 +15,7 @@
     <para>Sources for documentation are extracted using the org.openengsb.openengsbplugin.ExtractDocSourceMojo. The mojo
       itself includes a list of implementations of the org.openengsb.openengsbplugin.extract.AnnotatedSourceExtractor
       interface.</para>
-    <!--<xi:include href="snippets/AnnotatedSourceExtractor.xml" />-->
+    <xi:include href="snippets/AnnotatedSourceExtractor.xml" />
   </section>
 
 </chapter>
