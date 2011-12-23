@@ -33,6 +33,7 @@ project. There's also a source package now providing the tagged source as is for
     * [OPENENGSB-2248] - Release openengsb-maven-plugin-2.3.0
     * [OPENENGSB-2420] - Document SourceExtractionFeature from user and contributor perspective
     * [OPENENGSB-2438] - Add License file
+    * [OPENENGSB-2457] - Temporary deactivate source parsing
 
 
 openengsb-maven-plugin-2.2.0 2011-10-31
