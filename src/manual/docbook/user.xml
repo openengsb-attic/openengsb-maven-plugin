@@ -1,0 +1,282 @@
+<chapter xml:id="mavenplugin.user" version="5.0" xmlns="http://docbook.org/ns/docbook"
+  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd
+  http://www.w3.org/1999/xlink http://www.docbook.org/xml/5.0/xsd/xlink.xsd
+  http://www.w3.org/2001/XMLSchema-instance http://www.w3.org/2001/XMLSchema-instance.xsd">
+
+  <title>Using the OpenEngSB Maven Plugin</title>
+  <para> The openengsb-maven-plugin is a plugin for Apache Maven, intended to simplify various activities (creating
+    domains or connectors, building a release artifact of the whole project etc.) when developing based on the
+    OpenEngSB. </para>
+
+  <section>
+    <title>Purpose of the openengsb-maven-plugin</title>
+    <para>The purpose of the OpenEngSB Maven Plugin is to provide additional useful goals for the development of the
+      OpenEngSB itself and all projects which base on the OpenEngSB. It helps in various goals starting in assembling,
+      checkstyle, license checking and many other various goals which would otherwise require to duplicate tons of
+      version (and manage it in addition) between the OpenEngSB and projects which are based on the OpenEngSB.</para>
+  </section>
+
+  <section>
+    <title>Configuring the openengsb-maven-plugin for your project</title>
+    <para> To use the openengsb-maven-plugin in your project add the following configuration to your project's pom.xml: </para>
+    <programlisting language="xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"&gt;
+  ...
+  &lt;build&gt;
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.openengsb&lt;/groupId&gt;
+        &lt;artifactId&gt;openengsb-maven-plugin&lt;/artifactId&gt;
+        &lt;version&gt;${openengsb.maven.plugin.version}&lt;/version&gt;
+      &lt;/plugin&gt;
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+  ...
+&lt;/project&gt;       
+        </programlisting>
+    <para> The plugin can now be invoked via <command>mvn openengsb:&lt;goal&gt;</command>
+    </para>
+  </section>
+
+  <section>
+    <title>Available Goals</title>
+    <para>
+      <command>assemble</command> or <filename>etc/scripts/assemble.sh</filename>
+    </para>
+    <para> Installs the OpenEngSB and skips tests. Furthermore a <emphasis>nightly</emphasis> profile is activated if
+      available in your poms. </para>
+    <para>
+      <command>eclipse</command> or <filename>etc/scripts/eclipse.sh</filename>
+    </para>
+    <para> Generates eclipse configuration file for the module where it is invoked from and all submodules. The
+      generated eclipse projects are also configured to use the checkstyle rules shipped with the plugin (see checkstyle
+      mojo). </para>
+    <para>
+      <command>checkstyle</command>
+    </para>
+    <para> Performs a Checkstyle check of the project. The checkstyle configuration file which is used for the check can
+      be found <link
+        xlink:href="https://github.com/openengsb/openengsb-maven-plugin/blob/master/src/main/resources/checkstyle/checkstyle.xml"
+        >here</link>. We ship this configuration file with the plugin (and changes need to be done there) because we
+      think it may be useful for other OpenEngSB related projects. Setting up eclipse projects with configured
+      checkstyle becomes very easy that way (simply mvn openengsb:eclipse). </para>
+    <para>
+      <command>genConnector</command> or <filename>etc/scripts/gen-connector.sh</filename> (For additional info how to
+      create a connector see <xref linkend="developer.howto.internal.connector"/>) </para>
+    <para> Guides interactively through the creation of a connector and generates the artifact via the connector
+      archetype. </para>
+    <para>
+      <command>genDomain</command> or <filename>etc/scripts/gen-domain.sh</filename> (For additional info how to create
+      a domain see <xref linkend="developer.howto.internal.domain"/>) </para>
+    <para> Guides interactively through the creation of a domain and generates the artifact via the domain archetype. </para>
+    <para xml:id="licenseCheck">
+      <command>licenseCheck</command> or <filename>etc/scripts/license-check.sh</filename>
+    </para>
+    <para> Performs a check if appropriate license headers are available in every source file. The licenseCheck mojo
+      wraps the com.mycila.maven-license-plugin. A large part of the default behavior of this mojo can be changed in
+        <filename>src/main/resources/license/licenseConfig.xml</filename>. See <link
+        xlink:href="http://code.google.com/p/maven-license-plugin/wiki/Configuration#maven-license-plugin_configuration_options"
+        >this site</link> for available configuration options. The openengsb-maven-plugin needs to be reinstalled after
+      changing its default behavior. </para>
+    <para>
+      <emphasis>NOTE: pom.xml files are excluded from license check</emphasis>
+    </para>
+    <para> Parameters: </para>
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>additionalExcludes</emphasis></para>
+        <para>Defines path to a file where each line represents a pattern which files to exclude from license check or
+          license format (additionally to the default excludes).</para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      <command>licenseFormat</command> or <filename>etc/scripts/license-format.sh</filename>
+    </para>
+    <para> Adds a license header to files where the license header is missing. Regarding the configuration for this mojo
+      the same applies as for licenseCheck. </para>
+    <para>
+      <emphasis>NOTE: pom.xml files are excluded from license format</emphasis>
+    </para>
+    <para> Parameters: </para>
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>additionalExcludes</emphasis></para>
+        <para>see description of <link linkend="licenseCheck">licenseCheck</link></para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      <command>prePush</command> or <filename>etc/scripts/pre-push.sh</filename>
+    </para>
+    <para> Builds and installs the openengsb, checks for license headers, performs a Checkstyle check and runs the
+      integration tests. </para>
+    <para> Parameters: </para>
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>additionalExcludes</emphasis></para>
+        <para>see description of <link linkend="licenseCheck">licenseCheck</link></para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      <command>provision</command> or <filename>etc/scripts/run.sh</filename> /
+        <filename>etc/scripts/quickrun.sh</filename>
+    </para>
+    <para> Equivalent to execute karaf or karaf.bat per hand after build by mvn clean install in a (typically) assembly
+      directory. </para>
+    <para> Parameters: </para>
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>provisionPathUnix</emphasis></para>
+        <para> This setting should be done in the one of the assembly folders and have to point to the final directory
+          where the karaf system, etc configs and so on consist. </para>
+      </listitem>
+      <listitem>
+        <para><emphasis>provisionExecutionPathUnix</emphasis></para>
+        <para> The path to the executable in the unix archive file </para>
+      </listitem>
+      <listitem>
+        <para><emphasis>additionalRequiredExecutionPathUnix</emphasis></para>
+        <para> Sometimes it's required that some executable files, provided in
+            <emphasis>provisionExecutionPathUnix</emphasis> execute other files which have to made executable to work
+          correctly on themselves. Those files should be specified here. </para>
+      </listitem>
+      <listitem>
+        <para><emphasis>provisionPathWindows</emphasis></para>
+        <para> This setting should be done in the one of the assembly folders and have to point to the final directory
+          where the karaf system, etc configs and so on consist. </para>
+      </listitem>
+      <listitem>
+        <para><emphasis>provisionExecutionPathWindows</emphasis></para>
+        <para> The path to the executable in the windows archive file </para>
+      </listitem>
+      <listitem>
+        <para><emphasis>additionalRequiredExecutionPathWindows</emphasis></para>
+        <para> Sometimes it's required that some executable files, provided in
+            <emphasis>provisionExecutionPathWindows</emphasis> execute other files which have to made executable to work
+          correctly on themselves. Those files should be specified here. </para>
+      </listitem>
+    </itemizedlist>
+    <para> These parameters are typically configured in the pom of your assembly project
+        (<filename>/assembly/pom.xml</filename> for the OpenEngSB)). </para>
+    <para>
+      <command>pushVersion</command> or <filename>etc/scripts/push-version.sh</filename>
+    </para>
+    <para> Updates the development version. </para>
+    <para> Parameters: </para>
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>developmentVersion</emphasis></para>
+        <para> The new SNAPSHOT version. </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      <command>extractSource</command>
+    </para>
+    <para> The goal is a really powerful for including source code into the documentation. It recursively scans all
+      files on a defined path for specific comments in the code and extracts the source in between into a soruce listing
+      which could be included afterwards easily. Currently the plugin scans the following files: .java, .xml,
+      .properties and .cfg. To start an exclude in java your code needs to look like...</para>
+    <para><programlisting language="java"><![CDATA[
+    // @extract-start javaout
+    private App() {
+    }
+    // @extract-end
+]]></programlisting></para>
+    <para>... The format of the comments have to be eactly of the format as shown in the sample. "javaout" could be
+      replaced on the other hand with whatever you like. A file will be created in the target folder with the name of
+      your choice ("javaout" in this case) containing the content between the comments. In addition the "programlisting"
+      and the correct language tag is attached. This allows to directly include the code which is also compiled for your
+      project, to be included into the documentation.</para>
+    <para>For xml a simple example would look like:</para>
+    <para><programlisting language="xml"><![CDATA[
+<blueprint>
+
+  <!-- @extract-start xmlout -->
+  <service id="abc" interface="a.b.c">
+    <bean class="a.b.d" />
+  </service>
+  <!-- @extract-end -->
+
+</blueprint>
+]]></programlisting></para>
+    <para>Property files and cfg files are of exactly the same format and would need to look like:</para>
+    <para><programlisting language="properties"><![CDATA[
+# @extract-start propout
+timetablePageName=Timetable
+# @extract-end
+]]></programlisting></para>
+    <para> Parameters: </para>
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>sourcePath</emphasis></para>
+        <para> The path which should be scanned for sources. </para>
+      </listitem>
+      <listitem>
+        <para><emphasis>targetPath</emphasis></para>
+        <para> The path where the generated files should be pushed to. </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      <command>releaseNightly</command> or <filename>etc/scripts/release-nightly.sh</filename>
+    </para>
+    <para> Mojo to perform nightly releases. This mojo activates the <emphasis>nightly</emphasis> profile in the
+      project, where you can put your additional configuration for nightly releases (To see what these profiles can be
+      necessary for please read the descript of the other release mojos). </para>
+    <para>
+      <command>release&lt;XXX&gt;</command> (You can find a detailed description of the OpenEngSB release process in
+        <xref linkend="developer.release"/>) </para>
+    <para> The release&lt;XXX&gt; mojos (except Nightly) wrap the <link
+        xlink:href="http://code.google.com/p/maven-license-plugin/">maven-license-plugin</link>, basically just invoking
+        <literal>mvn release:prepare</literal> and then <literal>mvn release:perforn</literal> with some useful default
+      configuration which can be reused for other projects related to the openengsb. These mojos perform a release and
+      activate the <emphasis>&lt;XXX&gt;</emphasis> profile. These release profiles are important and are required to
+      ..</para>
+    <itemizedlist>
+      <listitem>
+        <para> .. select the appropriate passphrase for the maven release repository from your
+            <filename>settings.xml</filename>. For additional information on this topic see <xref
+            linkend="developer.release.configuremaven"/>. </para>
+      </listitem>
+      <listitem>
+        <para> .. set links depending on the release type. For examples please see the profiles in <link
+            xlink:href="https://github.com/openengsb/openengsb/blob/master/pom.xml">the pom</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para> .. configure distribution management of the project site, depending on the release type. For examples see
+          profiles in <link xlink:href="https://github.com/openengsb/openengsb/blob/master/docs/homepage/pom.xml"
+            >docs/homepage/pom</link>
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>Parameters:</para>
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>connectionUrl</emphasis></para>
+        <para> URL to your SCM repository (e.g. scm:git:file://~/openengsb). During the release process changes (version
+          updates, etc) are commited into your SCM. </para>
+      </listitem>
+    </itemizedlist>
+    <para>Goals:</para>
+    <itemizedlist>
+      <listitem>
+        <para><command>releaseFinal</command> or <filename>etc/scripts/release-final.sh</filename></para>
+        <para>profile = <emphasis>final</emphasis></para>
+      </listitem>
+      <listitem>
+        <para><command>releaseMilestone</command> or <filename>etc/scripts/release-milestone.sh</filename></para>
+        <para>profile = <emphasis>milestone</emphasis></para>
+      </listitem>
+      <listitem>
+        <para><command>releaseRC</command> or <filename>etc/scripts/release-rc.sh</filename></para>
+        <para>profile = <emphasis>rc</emphasis></para>
+      </listitem>
+      <listitem>
+        <para><command>releaseSupport</command> or <filename>etc/scripts/release-support.sh</filename></para>
+        <para>profile = <emphasis>support</emphasis></para>
+      </listitem>
+    </itemizedlist>
+  </section>
+</chapter>
