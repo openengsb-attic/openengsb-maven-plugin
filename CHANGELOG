@@ -1,3 +1,40 @@
+openengsb-maven-plugin-2.3.0 2011-12-23
+--------------------------------------------
+
+The third feature release cut from the 2.x release series comes with great new features concerning the documentation.
+With this plugin a new goal (extractSource) had been added which allows to tag source code and automatically generate
+docbook src from it. In addition we've upgraded various libraries and included the documentation now directly into the
+project. There's also a source package now providing the tagged source as is for building/modifying the plugin locally.
+
+### Details
+** Bug
+    * [OPENENGSB-2408] - LicenseFormat test fails
+
+** Improvement
+    * [OPENENGSB-2419] - Move documentation from framework to plugin
+    * [OPENENGSB-2440] - Use CHANGELOG instead of CHANGELOG.md
+
+** Library Upgrade
+    * [OPENENGSB-2409] - Upgrade to openengsb-root 26
+    * [OPENENGSB-2410] - Upgrade commons-compress to 1.3
+    * [OPENENGSB-2411] - Upgrade to commons-io 2.1
+    * [OPENENGSB-2412] - Include guava library into the maven plugin
+    * [OPENENGSB-2441] - Upgrade to root-27
+
+** New Feature
+    * [OPENENGSB-2413] - Add infrastructure to extract annotated sources from files into docbook programlistings
+    * [OPENENGSB-2415] - Add annotated parser to include java into the docs
+    * [OPENENGSB-2416] - Add annotated parser to include xml into the docs
+    * [OPENENGSB-2417] - Add annotated parser to include cfg into the docs
+    * [OPENENGSB-2418] - Add annotated parser to include properties into the docs
+    * [OPENENGSB-2439] - Include source distribution
+
+** Task
+    * [OPENENGSB-2248] - Release openengsb-maven-plugin-2.3.0
+    * [OPENENGSB-2420] - Document SourceExtractionFeature from user and contributor perspective
+    * [OPENENGSB-2438] - Add License file
+
+
 openengsb-maven-plugin-2.2.0 2011-10-31
 --------------------------------------------
 
