@@ -66,7 +66,8 @@ public class ExtractDocSourceMojo extends AbstractMojo {
     /**
      * All extractors which should be searched for the possibility to extract source.
      */
-    private List<AnnotatedSourceExtractor> sourceExtractors = Lists.newArrayList(new OpenEngSBMavenPluginJavaSourceExtractor(),
+    private List<AnnotatedSourceExtractor> sourceExtractors = Lists.newArrayList(
+        new OpenEngSBMavenPluginJavaSourceExtractor(),
         new OpenEngSBMavenPluginXmlSourceExtractor(), new OpenEngSBMavenPluginPropSourceExtractor());
 
     @Override
@@ -141,9 +142,9 @@ public class ExtractDocSourceMojo extends AbstractMojo {
         targetPath.mkdirs();
         File targetFile = new File(targetPath, file + ".xml");
         BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile));
-        writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         writer.newLine();
-        writer.write("<para>");
+        writer
+            .write("<para xmlns=\"http://docbook.org/ns/docbook\" xmlns:xi=\"http://www.w3.org/2001/XInclude\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"5.0\">");
         writer.newLine();
         writer.write("<programlisting language=\"" + language + "\"><![CDATA[");
         writer.newLine();
